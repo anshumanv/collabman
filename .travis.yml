@@ -1,0 +1,26 @@
+language: python
+python:
+  - 3.6
+services:
+  - postgresql
+env:
+  -DJANGO=2.0.6
+  -DB=postgresql
+  -DEBUG=True
+  -DB_NAME=test_db
+  -DB_USER=test
+  -DB_PASSWORD=test
+  -DB_HOST=127.0.0.1
+  -DB_PORT=5432
+  -ALLOWED_HOSTS=*
+  -SKEY=collabman
+install:
+  - pipenv install
+before_script:
+  - psql -c "CREATE USER test WITH CREATEUSER PASSWORD 'test';" -U postgres
+  - psql -c "ALTER USER test CREATEDB;" -U postgres
+  - psql -c "CREATE DATABASE test_db;" -U postgres
+  - psql -c "GRANT ALL ON DATABASE test_db TO test;" -U postgres
+script:
+  - python manage.py makemigrations
+  - python manage.py migrate 
