@@ -9,6 +9,7 @@ url = "https://pypi.org/simple"
 django = "*"
 djangorestframework = "*"
 python-decouple = "*"
+django-webpack-loader = "*"
 
 [requires]
 python_version = "3.5"
