@@ -38,7 +38,17 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'webpack_loader',
+    'rest_framework',
+    'rest_framework.authtoken',
+    'rest_auth',
+    'api',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth.registration',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -104,6 +114,8 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 # Webpack config
 WEBPACK_LOADER = {
     'DEFAULT': {
@@ -112,6 +124,15 @@ WEBPACK_LOADER = {
         }
 }
 
+# Rest framework stuff
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.0/topics/i18n/
