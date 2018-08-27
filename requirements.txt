@@ -1,0 +1,8 @@
+Django==2.1
+django-rest-auth==0.9.3
+django-rest-framework==0.1.0
+django-webpack-loader==0.6.0
+djangorestframework==3.8.2
+python-decouple==3.1
+pytz==2018.5
+six==1.11.0
