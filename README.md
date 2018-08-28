@@ -11,8 +11,10 @@ Collaboration management tool for team projects.
 ```sh
 sudo -su postgres
 create user <username> with password '<password>';
-create <database name> collabman owner <username>;
+create database <database name> collabman owner <username>;
 grant ALL ON <database name> to <username>;
+OR
+GRANT ALL PRIVILEGES ON <database name> to <username>;
 ```
 
 
