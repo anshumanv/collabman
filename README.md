@@ -12,7 +12,7 @@ Collaboration management tool for team projects.
 sudo -su postgres
 psql
 create user <username> with password '<password>';
-create database <database name> collabman owner <username>;
+create database <database name> owner <username>;
 grant ALL ON <database name> to <username>;
 OR
 GRANT ALL PRIVILEGES ON <database name> to <username>;
