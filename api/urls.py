@@ -10,4 +10,5 @@ urlpatterns = [
 	url(r'^auth/', include('rest_auth.urls')),
     url(r'^auth/register/', include('rest_auth.registration.urls')),
     url(r'^login$',login_page)
+    
 ]

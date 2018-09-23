@@ -1,19 +1,14 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>test</title>
-</head>
-<body>
-<h2>Login</h2>
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Login</h2>
   <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit">Login</button>
   </form>
-   <br>
-  <p><strong>-- OR --</strong></p>
-  <a href="{% url 'social:begin' 'google-oauth2' %}">Login with Google</a><br>
+  <br>
   <p><strong>-- OR --</strong></p>
   <a href="{% url 'social:begin' 'github' %}">Login with GitHub</a><br>
-</body>
-</html>
+  <a href="{% url 'social:begin' 'google-oauth2' %}">Login with google</a>
+{% endblock %}

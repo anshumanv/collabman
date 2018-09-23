@@ -17,6 +17,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
 from django.views.generic import TemplateView
+from django.contrib.auth import views as auth_views
+from api import views
+
 
 
 
@@ -24,5 +27,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls')),
     url(r'auth/', include("rest_framework_social_oauth2.urls")),
+    url(r'^api/login/', include('rest_social_auth.urls_jwt')),
+    url(r'^api/login/', include('rest_social_auth.urls_token')),
+    url(r'^api/login/', include('rest_social_auth.urls_session')),
+
+
+    
     #url(r'^', TemplateView.as_view(template_name="index.html")),
 ]
