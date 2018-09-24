@@ -8,7 +8,8 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Contributions from '../components/Contributions'
-import TeamCard from '../components/Team'
+import TeamCard from '../components/Team';
+import Tasks from '../components/Tasks';
 
 import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
@@ -66,8 +67,11 @@ function Dashboard(props) {
       <main className={classes.content}>
         <div className={classes.toolbar} />
         <Typography noWrap>{'Welcome to collabman!'}</Typography>
+        
+
         <Contributions />
         <TeamCard />
+        <Tasks />
       </main>
     </div>
   );

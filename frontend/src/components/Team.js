@@ -53,14 +53,14 @@ function TeamCard(props) {
   return (
     <Card className={classes.card}>
       <CardContent>
-      <Typography className={classes.title} color="textSecondary">
-        Team
-      </Typography>
+        <Typography className={classes.title} color="textSecondary">
+          Team
+        </Typography>
         <div className={classes.row}>
-      <Avatar className={classes.avatar}>H</Avatar>
-      <Avatar className={classes.orangeAvatar}>N</Avatar>
-      <Avatar className={classes.purpleAvatar}>OP</Avatar>
-    </div>
+          <Avatar className={classes.avatar}>H</Avatar>
+          <Avatar className={classes.orangeAvatar}>N</Avatar>
+          <Avatar className={classes.purpleAvatar}>OP</Avatar>
+        </div>
       </CardContent>
     </Card>
   );
