@@ -8,6 +8,7 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 import Contributions from '../components/Contributions'
+import TeamCard from '../components/Team'
 
 import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
@@ -16,7 +17,7 @@ const drawerWidth = 240;
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    height: 440,
+    height: '100vh',
     zIndex: 1,
     overflow: 'hidden',
     position: 'relative',
@@ -30,6 +31,7 @@ const styles = theme => ({
     width: drawerWidth,
   },
   content: {
+  	overflowY: 'scroll',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
@@ -38,7 +40,7 @@ const styles = theme => ({
   toolbar: theme.mixins.toolbar,
 });
 
-function ClippedDrawer(props) {
+function Dashboard(props) {
   const { classes } = props;
 
   return (
@@ -65,13 +67,14 @@ function ClippedDrawer(props) {
         <div className={classes.toolbar} />
         <Typography noWrap>{'Welcome to collabman!'}</Typography>
         <Contributions />
+        <TeamCard />
       </main>
     </div>
   );
 }
 
-ClippedDrawer.propTypes = {
+Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(ClippedDrawer);
+export default withStyles(styles)(Dashboard);
