@@ -10,6 +10,7 @@ import Divider from '@material-ui/core/Divider';
 import Contributions from '../components/Contributions'
 import TeamCard from '../components/Team';
 import Tasks from '../components/Tasks';
+import DocumentsCard from '../components/Documents';
 
 import { mailFolderListItems, otherMailFolderListItems } from './tileData';
 
@@ -72,6 +73,7 @@ function Dashboard(props) {
         <Contributions />
         <TeamCard />
         <Tasks />
+        <DocumentsCard />
       </main>
     </div>
   );

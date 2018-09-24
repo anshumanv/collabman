@@ -67,7 +67,7 @@ class Contributions extends Component {
             Contributions
           </Typography>
           <div>
-            What the heck this is soo damn
+            Contributors to the project
           </div>
           <PieChart width={800} height={400}>
             <Pie 
