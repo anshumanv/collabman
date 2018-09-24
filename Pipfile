@@ -4,6 +4,8 @@ verify_ssl = true
 url = "https://pypi.org/simple"
 
 [dev-packages]
+pylint = "*"
+yapf = "*"
 
 [packages]
 django = "*"
