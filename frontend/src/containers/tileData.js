@@ -11,6 +11,7 @@ import SendIcon from '@material-ui/icons/Send';
 import MailIcon from '@material-ui/icons/Mail';
 import DeleteIcon from '@material-ui/icons/Delete';
 import ReportIcon from '@material-ui/icons/Report';
+import BluetoothIcon from '@material-ui/icons/Bluetooth'
 
 export const mailFolderListItems = (
   <div>
@@ -60,6 +61,12 @@ export const otherMailFolderListItems = (
         <ReportIcon />
       </ListItemIcon>
       <ListItemText primary="Test Project" />
+    </ListItem>
+    <ListItem button>
+    <ListItemIcon>
+    <BluetoothIcon/>
+    </ListItemIcon>
+    <ListItemText primary="Logout"/>
     </ListItem>
   </div>
 );
