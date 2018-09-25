@@ -11,6 +11,7 @@ import NotFound from './containers/NotFound';
 import NewProject from './containers/NewProject';
 import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
+import Auth from './containers/Auth';
 
 
 import './styles/index.css';
@@ -28,6 +29,7 @@ ReactDOM.render(
 					<Route exact path='/new' component={NewProject} />
 					<Route exact path='/project/:projectId' component={Dashboard} />
 					<Route exact path='/profile/:userId' component={Profile} />
+					<Route exact path='/auth' component={Auth} />
 					<Route exact path='*' component={NotFound} />
 				</Switch>
 			</div>
