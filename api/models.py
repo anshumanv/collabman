@@ -4,6 +4,15 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 # Create your models here.
 
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
+    email = models.EmailField(unique=True)
+    bio = models.TextField(max_length=500, blank=True)
+    location = models.CharField(max_length=30, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+
 class Project(models.Model):
     project_id = models.CharField(max_length=100, blank=True, default='', primary_key = True)
     project_name = models.CharField(max_length=100, blank=True, default='', unique=True)
@@ -14,8 +23,8 @@ class Project(models.Model):
     calendar_api_key = models.CharField(max_length=100, blank=True, default='', unique=True)
     git_api_key = models.CharField(max_length=100, blank=True, default='', unique=True)
     slack_api_key = models.CharField(max_length=100, blank=True, default='', unique=True)
-    users = models.ManyToManyField(User, related_name='users')
-    project_manager = models.ForeignKey(User, on_delete=models.CASCADE, related_name='project_manager')
+    users = models.ManyToManyField(Profile, related_name='users')
+    project_manager = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='project_manager')
 
 
 class DocType(models.Model):
@@ -51,7 +60,7 @@ class Subtask(models.Model):
 
 class SubtaskLog(models.Model):
     subtask_id = models.ForeignKey(Subtask, on_delete=models.CASCADE)
-    assigned_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    assigned_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     subtask_deadline = models.DateField()
     work_description = models.TextField()
     is_finished = models.BooleanField()
