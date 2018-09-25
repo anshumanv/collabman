@@ -28,7 +28,8 @@ const styles = theme => ({
   	flexDirection: 'column'
   },
   textField: {
-  	width: '75vw',
+  	width: '60vw',
+  	maxWidth: '500px',
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
   },
