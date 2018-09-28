@@ -1,10 +1,10 @@
 from django.contrib import admin
-from .models import Profile, Project, DocType, Documents, Task, Subtask, SubtaskLog
+from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
 
 admin.site.register(Profile)
 admin.site.register(Project)
 admin.site.register(DocType)
-admin.site.register(Documents)
+admin.site.register(Document)
 admin.site.register(Task)
 admin.site.register(Subtask)
 admin.site.register(SubtaskLog)

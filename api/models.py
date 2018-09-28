@@ -42,7 +42,7 @@ class DocType(models.Model):
         return self.template_title
 
 
-class Documents(models.Model):
+class Document(models.Model):
     document_id = models.CharField(max_length=100, blank=True, default='', primary_key = True)
     document_link = models.URLField(unique=True)
     document_title = models.CharField(max_length=20, blank=False, default='New Document')
