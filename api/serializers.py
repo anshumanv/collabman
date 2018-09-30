@@ -13,6 +13,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class ProjectSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(many=True)
     class Meta:
         model = Project
         fields = '__all__'
