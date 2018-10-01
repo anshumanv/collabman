@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
@@ -30,7 +30,7 @@ class ProfileAPIView(APIView):
 class LoginView(APIView):
     permission_classes = ()
 
-    def post(self, request,):
+    def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
@@ -42,3 +42,34 @@ class LoginView(APIView):
 class ProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+
+class ProjectList(APIView):
+    def get(self, request, uid):
+        user = get_object_or_404(Profile, id=uid)
+        projects = get_list_or_404(user.users)
+        serializer = ProjectSerializer(projects, many =True)
+        return Response(serializer.data)
+
+class ProjectView(APIView):
+    def get(self, request, uid, pid):
+        user = get_object_or_404(Profile, id=uid)
+        projects = get_list_or_404(user.users)
+        for project in projects:
+            if pid == project.pk:
+                serializer = ProjectSerializer(project)
+                return Response(serializer.data)
+        return Response(status=404)
+    
+    def post(self, request, uid, pid):
+        project = get_object_or_404(Project, project_id=pid)
+        if project.project_manager.id == uid:
+            serializer = ProjectSerializer(data=request.data)
+            if serializer.is_valid():
+                print(serializer.data)
+                serializer.save()
+                print('Everything is fine till now')
+                return Response(serializer.data)
+        else:
+            return Response(status=404)
+
+

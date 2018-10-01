@@ -1,6 +1,6 @@
 from django.urls import include, path
 from django.conf.urls import url
-from  .views import ProfileAPIView, UserCreate, LoginView, ProfileList, ProfileCreate
+from  .views import ProfileAPIView, UserCreate, LoginView, ProfileList, ProfileCreate, ProjectList, ProjectView
 
 
 from . import views
@@ -12,5 +12,7 @@ urlpatterns = [
     path("user/", ProfileList.as_view(), name="profile_list"),
     path("user/signup/", UserCreate.as_view(), name="user_create"),
     path("user/signup/profile", ProfileCreate.as_view(), name="user_create"),
-    path("user/login/", LoginView.as_view(), name="login")
-]   
+    path("user/login/", LoginView.as_view(), name="login"),
+    path("project/<int:uid>/", ProjectList.as_view(), name='view_user_projects'),
+    path("project/<int:uid>/<str:pid>", ProjectView.as_view(), name='view_user_project')
+]  
