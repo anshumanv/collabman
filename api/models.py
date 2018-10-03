@@ -87,6 +87,7 @@ class Subtask(models.Model):
 
 
 class SubtaskLog(models.Model):
+    sublog_id = models.IntegerField()
     subtask_id = models.ForeignKey(Subtask, on_delete=models.CASCADE)
     assigned_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     subtask_deadline = models.DateField()
@@ -98,4 +99,4 @@ class SubtaskLog(models.Model):
         return self.subtask_id.__str__() + '\t' + str(self.subtask_deadline)
 
     class Meta:
-        unique_together = ('subtask_id', 'assigned_user', 'subtask_deadline')
+        unique_together = ('subtask_id', 'sublog_id')

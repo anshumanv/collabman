@@ -173,3 +173,125 @@ class DocumentView(APIView):
         document = get_object_or_404(Document, project_id=pid, document_id=docid)
         document.delete()
         return Response(status=204)
+
+class TaskListView(APIView):
+    def get(self, request, pid):
+        project = get_object_or_404(Project, id=pid)
+        tasks = project.task_set.all()
+        serialize = TaskSerializer(tasks, many=True)
+        return Response(serialize.data, status=201)
+
+    def post(self, request, pid):
+        request.data['project_id'] = pid
+        serialize = TaskSerializer(data=request.data)
+        if serialize.is_valid():
+            return Response(serialize.data, status=201)
+        else:
+            return Response(serialize.errors, status=400)
+
+class TaskView(APIView):
+    def get(self, request, pid, tid):
+        data = get_object_or_404(Task, project_id=pid, task_id=tid)
+        serialize = TaskSerializer(data)
+        return Response(serialize.data, status=201)
+
+    def put(self, request, pid, tid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        data = request.data
+        serialize = TaskSerializer(task, data=data)
+        if serialize.is_valid():
+            serialize.save()
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
+    def delete(self, request, pid, docid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        task.delete()
+        return Response(status=204)
+
+class SubtaskListView(APIView):
+    def get(self, request, pid, tid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtasks = task.subtask_set.all()
+        serialize = SubtaskSerializer(subtasks, many=True)
+        return Response(serialize.data, status=201)
+
+    def post(self, request, pid, tid):
+        request.data['project_id'] = pid
+        request.data['task_id'] = tid
+        serialize = SubtaskSerializer(data=request.data)
+        if serialize.is_valid():
+            return Response(serialize.data, status=201)
+        else:
+            return Response(serialize.errors, status=400)
+
+class SubtaskView(APIView):
+    def get(self, request, pid, tid, subid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        serialize = SubtaskSerializer(subtask)
+        return Response(serialize.data, status=201)
+
+    def put(self, request, pid, tid, subid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        data = request.data
+        serialize = SubtaskSerializer(subtask, data=data)
+        if serialize.is_valid():
+            serialize.save()
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
+    def delete(self, request, pid, tid, subid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        subtask.delete()
+        return Response(status=204)
+
+class SubtaskLogListView(APIView):
+    def get(self, request, pid, tid, subid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        subtask_logs = subtask.subtasklog_set.all()
+        serialize = SubtaskLogSerializer(subtask_logs, many=True)
+        return Response(serialize.data, status=201)
+
+    def post(self, request, pid, tid, subid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        request.data['subtask_id'] = subtask.id
+        serialize = SubtaskLogSerializer(data=request.data)
+        if serialize.is_valid():
+            return Response(serialize.data, status=201)
+        else:
+            return Response(serialize.errors, status=400)
+
+
+class SubtaskLogView(APIView):
+    def get(self, request, pid, tid, subid, sublogid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        sublog = get_object_or_404(SubtaskLog, subtask_id = subtask.id, sublog_id=sublogid)
+        serialize = SubtaskLogSerializer(sublog)
+        return Response(serialize.data, status=201)
+
+    def put(self, request, pid, tid, subid, sublogid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
+        data = request.data
+        serialize = SubtaskLogSerializer(sublog, data=data)
+        if serialize.is_valid():
+            serialize.save()
+            return Response(status=201)
+        else:
+            return Response(status=400)
+
+    def delete(self, request, pid, tid, subid, sublogid):
+        task = get_object_or_404(Task, project_id=pid, task_id=tid)
+        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+        sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
+        sublog.delete()
+        return Response(status=204)
