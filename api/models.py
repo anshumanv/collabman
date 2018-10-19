@@ -17,7 +17,6 @@ class Profile(models.Model):
         return self.user.__str__()
 
 class Project(models.Model):
-    project_id = models.CharField(max_length=100, blank=True, default='', primary_key = True)
     project_name = models.CharField(max_length=100, blank=True, default='', unique=True)
     project_description = models.TextField()
     project_link = models.URLField(unique=True)
@@ -33,8 +32,8 @@ class Project(models.Model):
         return self.project_name
 
 
-class DocType(models.Model):
-    template_link = models.URLField(primary_key = True)
+class DocType(models.Model):    
+    template_link = models.URLField(unique = True)
     template_title = models.CharField(max_length=20, blank=False, default='template')
     template_purpose = models.TextField()
 
@@ -43,19 +42,22 @@ class DocType(models.Model):
 
 
 class Document(models.Model):
-    document_id = models.CharField(max_length=100, blank=True, default='', primary_key = True)
-    document_link = models.URLField(unique=True)
+    document_id = models.IntegerField()
+    document_link = models.URLField()
     document_title = models.CharField(max_length=20, blank=False, default='New Document')
     project_id = models.ForeignKey(Project, on_delete=models.CASCADE)
     template_link = models.ForeignKey(DocType, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.document_title
+    
+    class  Meta:
+        unique_together = ('document_id', 'project_id')
 
 
 class Task(models.Model):
     POSSIBLE_STATUS = [('work_in_progress', 'In Progress'), ('unallocated', 'Unallocated'), ('finished','Completed'), ('not_feasible', 'Not Feasible')]
-    task_id = models.CharField(max_length=100, blank=True, default='', primary_key=True)
+    task_id = models.IntegerField() 
     task_title = models.CharField(max_length=100, blank=True, default='')
     task_description = models.TextField()
     task_status = models.CharField(choices=POSSIBLE_STATUS, default='Not Allocated', max_length=100)
@@ -63,11 +65,14 @@ class Task(models.Model):
 
     def __str__(self):
         return self.task_title
+    
+    class Meta:
+        unique_together = ('task_id', 'project_id')
 
 
 class Subtask(models.Model):
     POSSIBLE_STATUS = [('work_in_progress', 'In Progress'),('unallocated', 'Unallocated'), ('finished','Completed'),('not_feasible', 'Not Feasible')]
-    subtask_id = models.CharField(max_length=100, blank=True, default='')
+    subtask_id = models.IntegerField()
     subtask_title = models.CharField(max_length=100, blank=True, default='')
     subtask_description = models.TextField()
     subtask_status = models.CharField(choices=POSSIBLE_STATUS, default='Not Allocated', max_length=100)
@@ -82,6 +87,7 @@ class Subtask(models.Model):
 
 
 class SubtaskLog(models.Model):
+    sublog_id = models.IntegerField()
     subtask_id = models.ForeignKey(Subtask, on_delete=models.CASCADE)
     assigned_user = models.ForeignKey(Profile, on_delete=models.CASCADE)
     subtask_deadline = models.DateField()
@@ -93,4 +99,4 @@ class SubtaskLog(models.Model):
         return self.subtask_id.__str__() + '\t' + str(self.subtask_deadline)
 
     class Meta:
-        unique_together = ('subtask_id', 'assigned_user', 'subtask_deadline')
+        unique_together = ('subtask_id', 'sublog_id')
