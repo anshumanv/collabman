@@ -3,7 +3,10 @@ django-rest-auth==0.9.3
 django-rest-framework==0.1.0
 django-webpack-loader==0.6.0
 djangorestframework==3.8.2
+django-allauth==0.38.0
 python-decouple==3.1
+psycopg2==2.7.5
 pytz==2018.5
+gunicorn = "*"
 six==1.11.0
 ipython==7.0.1
