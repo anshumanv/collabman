@@ -30,7 +30,7 @@ const styles = theme => ({
   },
   card: {
     minWidth: 275,
-    marginTop: '20px'
+    marginTop: '20px',
   },
 });
 

@@ -18,7 +18,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import TextField from '@material-ui/core/TextField';
 
-
 const styles = theme => ({
   card: {
     maxWidth: 400,
@@ -70,23 +69,21 @@ class RecipeReviewCard extends React.Component {
 
     return (
       <Card className={classes.card}>
-        <CardHeader
-          title="SignUp"
-        />
+        <CardHeader title="SignUp" />
         <CardContent>
           <div className={classes.container}>
-      <TextField
-        label="Email"
-        id="margin-none"
-        className={classes.textField}
-      />
-      <TextField
-        label="Password"
-        id="margin-dense"
-        className={classes.textField}
-        margin="dense"
-      />
-      </div>
+            <TextField
+              label="Email"
+              id="margin-none"
+              className={classes.textField}
+            />
+            <TextField
+              label="Password"
+              id="margin-dense"
+              className={classes.textField}
+              margin="dense"
+            />
+          </div>
         </CardContent>
       </Card>
     );

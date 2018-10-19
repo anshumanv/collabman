@@ -16,8 +16,6 @@ const styles = theme => ({
   },
 });
 
-
-
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -46,12 +44,20 @@ class CenteredTabs extends React.Component {
       <div className={classes.root}>
         <AppBar position="static">
           <Tabs value={value} onChange={this.handleChange} centered>
-            <Tab label="LOGIN" href="#login"/>
-            <Tab label="SIGNUP" href="#sign_up"/>
+            <Tab label="LOGIN" href="#login" />
+            <Tab label="SIGNUP" href="#sign_up" />
           </Tabs>
         </AppBar>
-        {value === 0 && <TabContainer><Login/></TabContainer>}
-        {value === 1 && <TabContainer><Signup/></TabContainer>}
+        {value === 0 && (
+          <TabContainer>
+            <Login />
+          </TabContainer>
+        )}
+        {value === 1 && (
+          <TabContainer>
+            <Signup />
+          </TabContainer>
+        )}
       </div>
     );
   }

@@ -11,12 +11,12 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Contributions from '../components/Contributions'
+import Contributions from '../components/Contributions';
 import TeamCard from '../components/Team';
 import Tasks from '../components/Tasks';
-import NewProject from './NewProject'
+import NewProject from './NewProject';
 import DocumentsCard from '../components/Documents';
-import Sidebar from '../components/Sidebar.js'
+import Sidebar from '../components/Sidebar.js';
 
 const drawerWidth = 240;
 
@@ -40,7 +40,7 @@ const styles = theme => ({
     width: drawerWidth,
   },
   content: {
-  	overflowY: 'scroll',
+    overflowY: 'scroll',
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
     padding: theme.spacing.unit * 3,
@@ -52,9 +52,8 @@ const styles = theme => ({
 class Dashboard extends Component {
   state = {
     auth: true,
-    anchorEl: null
+    anchorEl: null,
   };
-
 
   handleChange = event => {
     this.setState({ auth: event.target.checked });
@@ -68,7 +67,6 @@ class Dashboard extends Component {
     this.setState({ anchorEl: null });
   };
 
-
   render() {
     const { classes } = this.props;
     const { auth, anchorEl } = this.state;
@@ -78,59 +76,62 @@ class Dashboard extends Component {
       <div className={classes.root}>
         <AppBar position="absolute" className={classes.appBar}>
           <Toolbar>
-            <Typography className={classes.grow} variant="title" color="inherit" noWrap>
+            <Typography
+              className={classes.grow}
+              variant="title"
+              color="inherit"
+              noWrap
+            >
               collabman
             </Typography>
             {auth && (
-                <div>
-                  <IconButton
-                    aria-owns={open ? 'menu-appbar' : null}
-                    aria-haspopup="true"
-                    onClick={this.handleMenu}
-                    color="inherit"
-                  >
-                    <AccountCircle />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'right',
-                    }}
-                    open={open}
-                    onClose={this.handleClose}
-                  >
-                    <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={this.handleClose}>Logout</MenuItem>
-                  </Menu>
-                </div>
-              )}
+              <div>
+                <IconButton
+                  aria-owns={open ? 'menu-appbar' : null}
+                  aria-haspopup="true"
+                  onClick={this.handleMenu}
+                  color="inherit"
+                >
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={open}
+                  onClose={this.handleClose}
+                >
+                  <MenuItem onClick={this.handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                </Menu>
+              </div>
+            )}
           </Toolbar>
         </AppBar>
 
         <Sidebar />
-        
+
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Typography noWrap>{'Welcome to collabman!'}</Typography>
-          
 
           <Contributions />
-          
+
           <TeamCard />
-          
+
           <Tasks />
-          
+
           <DocumentsCard />
         </main>
       </div>
     );
-    
   }
 }
 

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -19,7 +19,6 @@ import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
 
-
 const styles = theme => ({
   root: {
     width: '100%',
@@ -30,30 +29,26 @@ const styles = theme => ({
   },
   card: {
     minWidth: 275,
-    marginTop: '20px'
+    marginTop: '20px',
   },
-
 });
-
 
 class TasksCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: true
-    }
+      open: true,
+    };
   }
-
 
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
   };
 
-
   render() {
     const { classes } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
-    
+
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -61,42 +56,40 @@ class TasksCard extends Component {
             Tasks
           </Typography>
           <div className={classes.root}>
-          <List
-            component="nav"
-          >
-            <ListItem button>
-              <ListItemIcon>
-                <SendIcon />
-              </ListItemIcon>
-              <ListItemText inset primary="Task 1" />
-            </ListItem>
-            <ListItem button>
-              <ListItemIcon>
-                <DraftsIcon />
-              </ListItemIcon>
-              <ListItemText inset primary="Task 2" />
-            </ListItem>
-            <ListItem button onClick={this.handleClick}>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText inset primary="Task 3" />
-              {this.state.open ? <ExpandLess /> : <ExpandMore />}
-            </ListItem>
-            <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                <ListItem button className={classes.nested}>
-                  <ListItemIcon>
-                    <StarBorder />
-                  </ListItemIcon>
-                  <ListItemText inset primary="Subtask 1" />
-                </ListItem>
-              </List>
-            </Collapse>
-          </List>
-        </div>
-      </CardContent>
-    </Card>
+            <List component="nav">
+              <ListItem button>
+                <ListItemIcon>
+                  <SendIcon />
+                </ListItemIcon>
+                <ListItemText inset primary="Task 1" />
+              </ListItem>
+              <ListItem button>
+                <ListItemIcon>
+                  <DraftsIcon />
+                </ListItemIcon>
+                <ListItemText inset primary="Task 2" />
+              </ListItem>
+              <ListItem button onClick={this.handleClick}>
+                <ListItemIcon>
+                  <InboxIcon />
+                </ListItemIcon>
+                <ListItemText inset primary="Task 3" />
+                {this.state.open ? <ExpandLess /> : <ExpandMore />}
+              </ListItem>
+              <Collapse in={this.state.open} timeout="auto" unmountOnExit>
+                <List component="div" disablePadding>
+                  <ListItem button className={classes.nested}>
+                    <ListItemIcon>
+                      <StarBorder />
+                    </ListItemIcon>
+                    <ListItemText inset primary="Subtask 1" />
+                  </ListItem>
+                </List>
+              </Collapse>
+            </List>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 }
@@ -105,4 +98,5 @@ TasksCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TasksCard);TasksCard
+export default withStyles(styles)(TasksCard);
+TasksCard;

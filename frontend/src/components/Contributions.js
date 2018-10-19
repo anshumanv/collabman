@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -38,13 +38,13 @@ const styles = {
     marginBottom: 12,
   },
 };
-  
+
 class Contributions extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      activePieIndex: 0
-    }
+      activePieIndex: 0,
+    };
   }
 
   onPieEnter = (data, index) => {
@@ -57,29 +57,31 @@ class Contributions extends Component {
     const { classes } = this.props;
     const { activePieIndex } = this.state;
     const bull = <span className={classes.bullet}>•</span>;
-    
-    const data = [{name: 'Group A', value: 400}, {name: 'Group B', value: 300},
-                    {name: 'Group C', value: 300}, {name: 'Group D', value: 200}];
+
+    const data = [
+      { name: 'Group A', value: 400 },
+      { name: 'Group B', value: 300 },
+      { name: 'Group C', value: 300 },
+      { name: 'Group D', value: 200 },
+    ];
     return (
       <Card className={classes.card}>
         <CardContent>
           <Typography className={classes.title} color="textSecondary">
             Contributions
           </Typography>
-          <div>
-            Contributors to the project
-          </div>
+          <div>Contributors to the project</div>
           <PieChart width={800} height={400}>
-            <Pie 
+            <Pie
               activeIndex={this.state.activeIndex}
-              activeShape={renderActiveShape} 
-              data={data} 
+              activeShape={renderActiveShape}
+              data={data}
               cx={300}
               nameKey="name"
               dataKey="value"
-              cy={200} 
+              cy={200}
               innerRadius={60}
-              outerRadius={80} 
+              outerRadius={80}
               fill="#8884d8"
               onMouseEnter={this.onPieEnter}
             />
@@ -177,11 +179,8 @@ renderActiveShape.propTypes = {
   name: PropTypes.string,
 };
 
-
 Contributions.propTypes = {
   classes: PropTypes.object.isRequired,
 };
-
-
 
 export default withStyles(styles)(Contributions);
