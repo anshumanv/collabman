@@ -28,7 +28,7 @@ ReactDOM.render(
 					<Route exact path='/' component={App} />
 					<Route exact path='/new' component={NewProject} />
 					<Route exact path='/project/:projectId' component={Dashboard} />
-					<Route exact path='/profile/:userId' component={Profile} />
+					<Route exact path='/profile/:username' component={Profile} />
 					<Route exact path='/auth' component={Auth} />
 					<Route exact path='*' component={NotFound} />
 				</Switch>
