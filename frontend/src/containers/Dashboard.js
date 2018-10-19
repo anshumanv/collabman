@@ -16,8 +16,7 @@ import TeamCard from '../components/Team';
 import Tasks from '../components/Tasks';
 import NewProject from './NewProject'
 import DocumentsCard from '../components/Documents';
-
-import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+import Sidebar from '../components/Sidebar.js'
 
 const drawerWidth = 240;
 
@@ -113,25 +112,20 @@ class Dashboard extends Component {
               )}
           </Toolbar>
         </AppBar>
-        <Drawer
-          variant="permanent"
-          classes={{
-            paper: classes.drawerPaper,
-          }}
-        >
-          <div className={classes.toolbar} />
-          <List>{mailFolderListItems}</List>
-          <Divider />
-          <List>{otherMailFolderListItems}</List>
-        </Drawer>
+
+        <Sidebar />
+        
         <main className={classes.content}>
           <div className={classes.toolbar} />
           <Typography noWrap>{'Welcome to collabman!'}</Typography>
           
 
           <Contributions />
+          
           <TeamCard />
+          
           <Tasks />
+          
           <DocumentsCard />
         </main>
       </div>
