@@ -23,6 +23,7 @@ const styles = theme => ({
     alignItems: 'center',
     width: 'fit-content',
     alignSelf: 'center',
+    flexDirection: 'column',
   },
   tagline: {
     fontFamily: 'K2D, sans-serif',
@@ -32,6 +33,11 @@ const styles = theme => ({
     backgroundColor: '#00af5b',
     color: 'white',
     marginLeft: '20px',
+  },
+  headingContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   buttonContainer: {
     display: 'flex',
@@ -54,11 +60,11 @@ class App extends Component {
             Signup
           </Button>
         </div>
-        <div className={classes.allCenter}>
+        <div className={classes.allCenter} style={{ marginTop: '20vh' }}>
           <div className={classes.heading}>collabman</div>
-        </div>
-        <div className={classes.allCenter}>
-          <div>Elegant collaboration management</div>
+          <div className={classes.allCenter}>
+            Elegant collaboration management
+          </div>
         </div>
       </div>
     );
