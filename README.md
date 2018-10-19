@@ -13,13 +13,14 @@ sudo -su postgres
 psql
 create user <username> with password '<password>';
 create database <database name> owner <username>;
-grant ALL ON <database name> to <username>;
-OR
-GRANT ALL PRIVILEGES ON <database name> to <username>;
+grant all privileges on database <database name> to <username>;
 ```
 
-
 2. Create .env file
+```sh
+cp .env.samle .env
+```
+
 Fill all the required fields in the file.
 
 
@@ -46,6 +47,5 @@ python3 manage.py runserver
 
 ```sh
 cd frontend/
-npm i
-npm start
+npm i && npm start
 ```

@@ -12,6 +12,9 @@ django = "*"
 djangorestframework = "*"
 python-decouple = "*"
 django-webpack-loader = "*"
+django-rest-auth = "*"
+django-allauth = "*"
+"psycopg2" = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "3.7"
