@@ -10,3 +10,4 @@ pytz==2018.5
 gunicorn = "*"
 six==1.11.0
 ipython==7.0.1
+dj-database-url = "*"

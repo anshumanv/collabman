@@ -17,6 +17,7 @@ django-allauth = "*"
 "psycopg2" = "*"
 gunicorn = "*"
 django-heroku = "*"
+dj-database-url = "*"
 
 [requires]
 python_version = "3.7"
