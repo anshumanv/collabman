@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
@@ -21,6 +22,7 @@ class ProfileCreate(generics.CreateAPIView):
     serializer_class = ProfileSerializer
 
 class ProfileAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pk):
         user_profile = get_object_or_404(Profile, id=pk)
         data = ProfileSerializer(user_profile).data
@@ -44,7 +46,6 @@ class ProfileAPIView(APIView):
 
 class LoginView(APIView):
     permission_classes = ()
-
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
@@ -57,8 +58,10 @@ class LoginView(APIView):
 class ProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
+    permission_classes = (IsAuthenticated,)
 
 class ProjectList(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, uid):
         user = get_object_or_404(Profile, id=uid)
         projects = get_list_or_404(user.users)
@@ -77,6 +80,7 @@ class ProjectList(APIView):
             return Response(serialize.errors, status=400)
 
 class ProjectView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, uid, pid):
         user = get_object_or_404(Profile, id=uid)
         projects = get_list_or_404(user.users)
@@ -106,6 +110,8 @@ class ProjectView(APIView):
             return Response(status=204)
         
 class DocTypeListView(generics.ListAPIView):
+
+    permission_classes = (IsAuthenticated,)
     queryset = DocType.objects.all()
     serializer_class = DocTypeSerializer
 
@@ -119,6 +125,8 @@ class DocTypeListView(generics.ListAPIView):
             return Response(serialize.errors, status=400)
 
 class DocTypeView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, did):
         doctype = get_object_or_404(DocType, id=did)
         serialize = DocTypeSerializer(doctype)
@@ -139,6 +147,8 @@ class DocTypeView(APIView):
         doctype.delete()
         return Response(status=204)
 class DocumentListView(APIView):
+    permission_classes = (IsAuthenticated,)
+
     def get(self, request, pid):
         project = get_object_or_404(Project, id=pid)
         documents = project.document_set.all()
@@ -155,6 +165,7 @@ class DocumentListView(APIView):
             return Response(serialize.errors, status=400)
 
 class DocumentView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, docid):
         data = get_object_or_404(Document, project_id=pid, document_id=docid)
         serialize = DocumentSerializer(data)
@@ -176,6 +187,7 @@ class DocumentView(APIView):
         return Response(status=204)
 
 class TaskListView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid):
         project = get_object_or_404(Project, id=pid)
         tasks = project.task_set.all()
@@ -192,6 +204,7 @@ class TaskListView(APIView):
             return Response(serialize.errors, status=400)
 
 class TaskView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, tid):
         data = get_object_or_404(Task, project_id=pid, task_id=tid)
         serialize = TaskSerializer(data)
@@ -213,6 +226,7 @@ class TaskView(APIView):
         return Response(status=204)
 
 class SubtaskListView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, tid):
         task = get_object_or_404(Task, project_id=pid, task_id=tid)
         subtasks = task.subtask_set.all()
@@ -230,6 +244,7 @@ class SubtaskListView(APIView):
             return Response(serialize.errors, status=400)
 
 class SubtaskView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, tid, subid):
         task = get_object_or_404(Task, project_id=pid, task_id=tid)
         subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
@@ -254,6 +269,7 @@ class SubtaskView(APIView):
         return Response(status=204)
 
 class SubtaskLogListView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, tid, subid):
         task = get_object_or_404(Task, project_id=pid, task_id=tid)
         subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
@@ -274,6 +290,7 @@ class SubtaskLogListView(APIView):
 
 
 class SubtaskLogView(APIView):
+    permission_classes = (IsAuthenticated,)
     def get(self, request, pid, tid, subid, sublogid):
         task = get_object_or_404(Task, project_id=pid, task_id=tid)
         subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
