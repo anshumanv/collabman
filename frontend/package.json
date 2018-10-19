@@ -55,7 +55,9 @@
   "scripts": {
     "start": "node scripts/start.js",
     "build": "node scripts/build.js",
-    "test": "node scripts/test.js --env=jsdom"
+    "test": "node scripts/test.js --env=jsdom",
+    "format": "prettier --write \"src/**/*.js\"",
+    "precommit": "lint-staged"
   },
   "jest": {
     "collectCoverageFrom": [
@@ -100,6 +102,18 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "eslint-config-prettier": "^3.1.0",
+    "eslint-plugin-prettier": "^3.0.0",
+    "husky": "^1.1.2",
+    "lint-staged": "^7.3.0",
+    "prettier": "^1.14.3",
     "webpack-bundle-tracker": "^0.3.0"
+  },
+  "lint-staged": {
+    "src/**/*.js": [
+      "eslint src --ext .js",
+      "prettier --write",
+      "git add"
+    ]
   }
 }
