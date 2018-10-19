@@ -149,6 +149,7 @@ class DocumentListView(APIView):
         request.data['project_id'] = pid
         serialize = DocumentSerializer(data=request.data)
         if serialize.is_valid():
+            serialize.save()
             return Response(serialize.data, status=201)
         else:
             return Response(serialize.errors, status=400)
@@ -185,6 +186,7 @@ class TaskListView(APIView):
         request.data['project_id'] = pid
         serialize = TaskSerializer(data=request.data)
         if serialize.is_valid():
+            serialize.save()
             return Response(serialize.data, status=201)
         else:
             return Response(serialize.errors, status=400)
@@ -222,6 +224,7 @@ class SubtaskListView(APIView):
         request.data['task_id'] = tid
         serialize = SubtaskSerializer(data=request.data)
         if serialize.is_valid():
+            serialize.save()
             return Response(serialize.data, status=201)
         else:
             return Response(serialize.errors, status=400)
@@ -264,6 +267,7 @@ class SubtaskLogListView(APIView):
         request.data['subtask_id'] = subtask.id
         serialize = SubtaskLogSerializer(data=request.data)
         if serialize.is_valid():
+            serialize.save()
             return Response(serialize.data, status=201)
         else:
             return Response(serialize.errors, status=400)
