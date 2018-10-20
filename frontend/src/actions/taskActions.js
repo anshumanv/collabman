@@ -1,35 +1,28 @@
-import { githubActions } from '../constants';
+import { taskActions } from '../constants';
 
-import { fetchRepoContributors } from '../API/github';
+import { fetchProjectTasks } from '../API/tasks';
 
 export const fetchTasks = project => {
   return (dispatch, getState) => {
-    return fetchRepoContributors(project)
+    return fetchProjectTasks(project)
       .then(response => {
-        dispatch(contributorsFetched(response.data));
+        dispatch(tasksFetched(response.data));
       })
       .catch(err => {
-        dispatch(contributorsFailed());
+        dispatch(tasksFailed());
       });
   };
 };
 
-const contributorsFetched = cons => {
-  let contributors = [];
-  cons.forEach(contributor => {
-    contributors.push({
-      username: contributor.author.login,
-      commits: contributor.total,
-    });
-  });
+const tasksFetched = tasks => {
   return {
-    type: githubActions.FETCH_CONTRIBUTION_SUCCESS,
-    contributors,
+    type: taskActions.FETCH_TASKS_SUCCESS,
+    tasks,
   };
 };
 
-const contributorsFailed = () => {
+const tasksFailed = () => {
   return {
-    type: githubActions.FETCH_CONTRIBUTION_FAILED,
+    type: taskActions.FETCH_TASKS_FAILED,
   };
 };

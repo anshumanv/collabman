@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -18,6 +20,9 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
+
+// Actions
+import { fetchTasks } from '../actions/taskActions';
 
 const styles = theme => ({
   root: {
@@ -39,6 +44,10 @@ class TasksCard extends Component {
     this.state = {
       open: true,
     };
+  }
+
+  componentDidMount() {
+    this.props.fetchProjectTasks(1);
   }
 
   handleClick = () => {
@@ -96,7 +105,22 @@ class TasksCard extends Component {
 
 TasksCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  fetchProjectTasks: PropTypes.func,
 };
 
-export default withStyles(styles)(TasksCard);
-TasksCard;
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchProjectTasks: project => {
+      return dispatch(fetchTasks(project));
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(TasksCard));
