@@ -26,6 +26,6 @@ const projectsFetched = projects => {
   };
 };
 
-const projectsLoadingFailed = () => {
+const projectsFailed = () => {
   return { type: projectActions.FETCH_USER_PROJECT_FAILED };
 };
