@@ -3,6 +3,7 @@ import { projectActions } from '../constants';
 const initialState = {
   projects: [],
   isLoaded: false,
+  currentProject: null,
 };
 
 export const projectReducer = (state = initialState, action) => {
