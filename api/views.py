@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
@@ -23,22 +24,24 @@ class ProfileCreate(generics.CreateAPIView):
 
 class ProfileAPIView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         data = ProfileSerializer(user_profile).data
         return Response(data)
     
-    def put(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
+    def put(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         serialize = ProfileSerializer(user_profile, data=request.data)
         if serialize.is_valid():
             serialize.save()
             Response(status=201)
         return Response(status=404)
     
-    def delete(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
-        user = get_object_or_404(User, id=pk)
+    def delete(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         user_profile.delete()
         user.delete()
         return Response(status=204)
@@ -62,13 +65,16 @@ class ProfileList(generics.ListAPIView):
 
 class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, uid):
-        user = get_object_or_404(Profile, id=uid)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user = get_object_or_404(Profile, id=user.id)
         projects = get_list_or_404(user.users)
         serializer = ProjectSerializer(projects, many =True)
         return Response(serializer.data)
     
-    def post(self, request, uid):
+    def post(self, request, username):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
         request.data['project_manager'] = uid
         if uid not in request.data['users']:
             request.data['users'].append(uid)
@@ -81,17 +87,21 @@ class ProjectList(APIView):
 
 class ProjectView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, uid, pid):
+    def get(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
         user = get_object_or_404(Profile, id=uid)
         projects = get_list_or_404(user.users)
         for project in projects:
-            if pid == project.pk:
+            if project_slug == project.slug:
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data)
         return Response(status=404)
     
-    def put(self, request, uid, pid):
-        project = get_object_or_404(Project, id=pid)
+    def put(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
+        project = get_object_or_404(Project, slug=project_slug)
         if project.project_manager.id == uid:
             data = request.data
             serializer = ProjectSerializer(project, data=data)
@@ -103,12 +113,15 @@ class ProjectView(APIView):
         else:
             return Response(status=404)
     
-    def delete(self, request, uid, pid):
-        project = get_object_or_404(Project, id=pid)
+    def delete(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
+        project = get_object_or_404(Project, slug=project_slug)
         if project.project_manager.id == uid:
             project.delete()
             return Response(status=204)
-        
+        else:
+            return Response(status=400)
 class DocTypeListView(generics.ListAPIView):
 
     permission_classes = (IsAuthenticated,)
