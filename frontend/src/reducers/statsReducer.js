@@ -1,4 +1,4 @@
-import { statsActions } from '../constants';
+import { githubActions } from '../constants';
 
 const initialState = {
   contributors: [],
@@ -7,13 +7,13 @@ const initialState = {
 
 export const statsReducer = (state = initialState, action) => {
   switch (action.type) {
-    case statsActions.FETCH_CONTRIBUTION_SUCCESS:
+    case githubActions.FETCH_CONTRIBUTION_SUCCESS:
       return {
         ...state,
         contributors: action.contributors,
         contributorsFetched: true,
       };
-    case statsActions.FETCH_CONTRIBUTION_FAILED:
+    case githubActions.FETCH_CONTRIBUTION_FAILED:
       return state;
     default:
       return state;

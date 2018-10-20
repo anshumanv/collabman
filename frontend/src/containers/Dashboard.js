@@ -23,8 +23,9 @@ import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
 
-// Functions
+// Actions
 import { getUserProjects } from '../actions/projectActions';
+import { fetchContributors } from '../actions/statsActions';
 
 const drawerWidth = 240;
 
@@ -65,6 +66,7 @@ class Dashboard extends Component {
 
   componentDidMount() {
     this.props.getUserProjects(1);
+    this.props.fetchContributors('ongaku-desktop');
   }
 
   handleChange = event => {
@@ -150,6 +152,7 @@ class Dashboard extends Component {
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
+  fetchContributors: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -160,6 +163,9 @@ const mapDispatchToProps = dispatch => {
   return {
     getUserProjects: userId => {
       return dispatch(getUserProjects(userId));
+    },
+    fetchContributors: project => {
+      return dispatch(fetchContributors(project));
     },
   };
 };
