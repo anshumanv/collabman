@@ -62,6 +62,7 @@ class ProfileList(generics.ListAPIView):
 
 class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
+    serializer_class = ProjectSerializer
     def get(self, request, uid):
         user = get_object_or_404(Profile, id=uid)
         projects = get_list_or_404(user.users)

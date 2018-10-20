@@ -18,6 +18,7 @@ django-allauth = "*"
 gunicorn = "*"
 django-heroku = "*"
 dj-database-url = "*"
+django-cors-headers = "*"
 
 [requires]
 python_version = "3.7"
