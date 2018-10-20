@@ -1,5 +1,8 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+// MUI :(
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -46,28 +49,43 @@ const styles = {
   },
 };
 
-function TeamCard(props) {
-  const { classes } = props;
-  const bull = <span className={classes.bullet}>•</span>;
+class TeamCard extends Component {
+  render() {
+    const { classes } = this.props;
+    const bull = <span className={classes.bullet}>•</span>;
 
-  return (
-    <Card className={classes.card}>
-      <CardContent>
-        <Typography className={classes.title} color="textSecondary">
-          Team
-        </Typography>
-        <div className={classes.row}>
-          <Avatar className={classes.avatar}>H</Avatar>
-          <Avatar className={classes.orangeAvatar}>N</Avatar>
-          <Avatar className={classes.purpleAvatar}>OP</Avatar>
-        </div>
-      </CardContent>
-    </Card>
-  );
+    return (
+      <Card className={classes.card}>
+        <CardContent>
+          <Typography className={classes.title} color="textSecondary">
+            Team
+          </Typography>
+          <div className={classes.row}>
+            <Avatar className={classes.avatar}>H</Avatar>
+            <Avatar className={classes.orangeAvatar}>N</Avatar>
+            <Avatar className={classes.purpleAvatar}>OP</Avatar>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 }
 
 TeamCard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(styles)(TeamCard);
+const mapStateToProps = state => {
+  return {
+    team: state.projects.currentProject,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(TeamCard));

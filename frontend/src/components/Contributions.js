@@ -177,7 +177,7 @@ renderActiveShape.propTypes = {
 
 Contributions.propTypes = {
   classes: PropTypes.object.isRequired,
-  contributors: PropTypes.arr,
+  contributors: PropTypes.array,
 };
 
 const mapStateToProps = state => {
@@ -186,11 +186,11 @@ const mapStateToProps = state => {
   };
 };
 
-const mapDispatchToPRops = dispatch => {
+const mapDispatchToProps = dispatch => {
   return {};
 };
 
 export default connect(
   mapStateToProps,
-  mapDispatchToPRops,
+  mapDispatchToProps,
 )(withStyles(styles)(Contributions));
