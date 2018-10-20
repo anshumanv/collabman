@@ -79,6 +79,7 @@ class Dashboard extends Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
+    window.location = '/profile/<username>';
   };
 
   render() {
