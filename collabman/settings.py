@@ -28,7 +28,7 @@ SECRET_KEY = config('SKEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'webpack_loader',
     'rest_framework',
+    'corsheaders',
     'rest_framework.authtoken',
     'rest_auth',
     'api',
@@ -55,6 +56,7 @@ SITE_ID = 1
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -63,6 +65,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'collabman.urls'
+
+CORS_ORIGIN_ALLOW_ALL=True
 
 TEMPLATES = [
     {
@@ -87,9 +91,14 @@ WSGI_APPLICATION = 'collabman.wsgi.application'
 # https://docs.djangoproject.com/en/2.0/ref/settings/#databases
 """
 DATABASES = {
-    'default': dj_database_url.config(
-        default=config('DATABASE_URL')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DB_NAME'),
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
+        'HOST': config('DB_HOST'),
+        'PORT': config('DB_PORT'),
+    }
 }
 """
 DATABASES = {

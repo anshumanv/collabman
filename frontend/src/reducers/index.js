@@ -1,5 +1,11 @@
 import { combineReducers } from 'redux';
 
-const RootReducer = combineReducers({});
+import { projectReducer } from './projectReducer';
+import { statsReducer } from './statsReducer';
+
+const RootReducer = combineReducers({
+  projects: projectReducer,
+  stats: statsReducer,
+});
 
 export default RootReducer;

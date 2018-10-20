@@ -1,5 +1,16 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+// Components
+import Contributions from '../components/Contributions';
+import TeamCard from '../components/Team';
+import Tasks from '../components/Tasks';
+import NewProject from './NewProject';
+import DocumentsCard from '../components/Documents';
+import Sidebar from '../components/Sidebar.js';
+
+// MUI :(
 import { withStyles } from '@material-ui/core/styles';
 import Drawer from '@material-ui/core/Drawer';
 import AppBar from '@material-ui/core/AppBar';
@@ -11,12 +22,10 @@ import IconButton from '@material-ui/core/IconButton';
 import List from '@material-ui/core/List';
 import Typography from '@material-ui/core/Typography';
 import Divider from '@material-ui/core/Divider';
-import Contributions from '../components/Contributions';
-import TeamCard from '../components/Team';
-import Tasks from '../components/Tasks';
-import NewProject from './NewProject';
-import DocumentsCard from '../components/Documents';
-import Sidebar from '../components/Sidebar.js';
+
+// Actions
+import { getUserProjects } from '../actions/projectActions';
+import { fetchContributors } from '../actions/statsActions';
 
 const drawerWidth = 240;
 
@@ -55,6 +64,11 @@ class Dashboard extends Component {
     anchorEl: null,
   };
 
+  componentDidMount() {
+    this.props.getUserProjects(1);
+    this.props.fetchContributors('ongaku-desktop');
+  }
+
   handleChange = event => {
     this.setState({ auth: event.target.checked });
   };
@@ -65,6 +79,7 @@ class Dashboard extends Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
+    window.location = '/profile/<username>';
   };
 
   render() {
@@ -137,6 +152,26 @@ class Dashboard extends Component {
 
 Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
+  getUserProjects: PropTypes.func,
+  fetchContributors: PropTypes.func,
 };
 
-export default withStyles(styles)(Dashboard);
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    getUserProjects: userId => {
+      return dispatch(getUserProjects(userId));
+    },
+    fetchContributors: project => {
+      return dispatch(fetchContributors(project));
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(Dashboard));

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
@@ -58,12 +59,7 @@ class Contributions extends Component {
     const { activePieIndex } = this.state;
     const bull = <span className={classes.bullet}>•</span>;
 
-    const data = [
-      { name: 'Group A', value: 400 },
-      { name: 'Group B', value: 300 },
-      { name: 'Group C', value: 300 },
-      { name: 'Group D', value: 200 },
-    ];
+    const { contributors } = this.props;
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -73,15 +69,15 @@ class Contributions extends Component {
           <div>Contributors to the project</div>
           <PieChart width={800} height={400}>
             <Pie
-              activeIndex={this.state.activeIndex}
+              activeIndex={activePieIndex}
               activeShape={renderActiveShape}
-              data={data}
-              cx={300}
-              nameKey="name"
-              dataKey="value"
+              data={contributors}
+              cx={400}
+              nameKey="username"
+              dataKey="commits"
               cy={200}
-              innerRadius={60}
-              outerRadius={80}
+              innerRadius={80}
+              outerRadius={120}
               fill="#8884d8"
               onMouseEnter={this.onPieEnter}
             />
@@ -181,6 +177,20 @@ renderActiveShape.propTypes = {
 
 Contributions.propTypes = {
   classes: PropTypes.object.isRequired,
+  contributors: PropTypes.array,
 };
 
-export default withStyles(styles)(Contributions);
+const mapStateToProps = state => {
+  return {
+    contributors: state.stats.contributors,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(Contributions));
