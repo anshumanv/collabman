@@ -45,7 +45,6 @@ class Sidebar extends Component {
         projectsData.push(project);
       });
     }
-    console.log(projectsData);
     return (
       <Drawer
         variant="permanent"
