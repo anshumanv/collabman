@@ -8,6 +8,9 @@ export const getUserProjects = userId => {
     return fetchUserProjects(userId)
       .then(response => {
         dispatch(projectsFetched(response.data));
+        if (response.data.length) {
+          dispatch(setCurrentProject(response.data[0]));
+        }
       })
       .catch(err => {
         dispatch(projectsFailed());
@@ -28,4 +31,11 @@ const projectsFetched = projects => {
 
 const projectsFailed = () => {
   return { type: projectActions.FETCH_USER_PROJECT_FAILED };
+};
+
+const setCurrentProject = curProject => {
+  return {
+    type: projectActions.SET_CURRENT_PROJECT,
+    curProject,
+  };
 };
