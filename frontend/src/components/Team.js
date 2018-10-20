@@ -51,9 +51,12 @@ const styles = {
 
 class TeamCard extends Component {
   render() {
-    const { classes } = this.props;
+    const { classes, currentProject } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
-
+    let team = [];
+    if (currentProject) {
+      team = currentProject.users;
+    }
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -61,9 +64,11 @@ class TeamCard extends Component {
             Team
           </Typography>
           <div className={classes.row}>
-            <Avatar className={classes.avatar}>H</Avatar>
-            <Avatar className={classes.orangeAvatar}>N</Avatar>
-            <Avatar className={classes.purpleAvatar}>OP</Avatar>
+            {team.map(member => (
+              <Avatar key={member} className={classes.avatar}>
+                {member}
+              </Avatar>
+            ))}
           </div>
         </CardContent>
       </Card>
@@ -73,11 +78,12 @@ class TeamCard extends Component {
 
 TeamCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  currentProject: PropTypes.object,
 };
 
 const mapStateToProps = state => {
   return {
-    team: state.projects.currentProject,
+    currentProject: state.projects.currentProject,
   };
 };
 
