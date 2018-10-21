@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils.text import slugify
+
 # Create your models here.
 
 class Profile(models.Model):
@@ -18,6 +20,7 @@ class Profile(models.Model):
 
 class Project(models.Model):
     project_name = models.CharField(max_length=100, blank=True, default='', unique=True)
+    slug = models.SlugField(unique=True, null=True)
     project_description = models.TextField()
     project_link = models.URLField(unique=True)
     project_chat_link = models.URLField(unique=True)
@@ -30,6 +33,10 @@ class Project(models.Model):
 
     def __str__(self):
         return self.project_name
+    
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.project_name)
+        super(Project, self).save(*args, **kwargs)
 
 
 class DocType(models.Model):    

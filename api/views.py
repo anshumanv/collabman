@@ -1,8 +1,10 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
+from django.core.exceptions import PermissionDenied
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
+from django.contrib.auth.models import User
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
@@ -23,22 +25,24 @@ class ProfileCreate(generics.CreateAPIView):
 
 class ProfileAPIView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         data = ProfileSerializer(user_profile).data
         return Response(data)
     
-    def put(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
+    def put(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         serialize = ProfileSerializer(user_profile, data=request.data)
         if serialize.is_valid():
             serialize.save()
             Response(status=201)
         return Response(status=404)
     
-    def delete(self, request, pk):
-        user_profile = get_object_or_404(Profile, id=pk)
-        user = get_object_or_404(User, id=pk)
+    def delete(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, id=user.id)
         user_profile.delete()
         user.delete()
         return Response(status=204)
@@ -62,14 +66,16 @@ class ProfileList(generics.ListAPIView):
 
 class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
-    serializer_class = ProjectSerializer
-    def get(self, request, uid):
-        user = get_object_or_404(Profile, id=uid)
+    def get(self, request, username):
+        user = get_object_or_404(User, username=username)
+        user = get_object_or_404(Profile, id=user.id)
         projects = get_list_or_404(user.users)
         serializer = ProjectSerializer(projects, many =True)
         return Response(serializer.data)
     
-    def post(self, request, uid):
+    def post(self, request, username):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
         request.data['project_manager'] = uid
         if uid not in request.data['users']:
             request.data['users'].append(uid)
@@ -82,17 +88,21 @@ class ProjectList(APIView):
 
 class ProjectView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, uid, pid):
+    def get(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
         user = get_object_or_404(Profile, id=uid)
         projects = get_list_or_404(user.users)
         for project in projects:
-            if pid == project.pk:
+            if project_slug == project.slug:
                 serializer = ProjectSerializer(project)
                 return Response(serializer.data)
         return Response(status=404)
     
-    def put(self, request, uid, pid):
-        project = get_object_or_404(Project, id=pid)
+    def put(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
+        project = get_object_or_404(Project, slug=project_slug)
         if project.project_manager.id == uid:
             data = request.data
             serializer = ProjectSerializer(project, data=data)
@@ -104,12 +114,15 @@ class ProjectView(APIView):
         else:
             return Response(status=404)
     
-    def delete(self, request, uid, pid):
-        project = get_object_or_404(Project, id=pid)
+    def delete(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        uid = user.id
+        project = get_object_or_404(Project, slug=project_slug)
         if project.project_manager.id == uid:
             project.delete()
             return Response(status=204)
-        
+        else:
+            return Response(status=400)
 class DocTypeListView(generics.ListAPIView):
 
     permission_classes = (IsAuthenticated,)
@@ -150,170 +163,362 @@ class DocTypeView(APIView):
 class DocumentListView(APIView):
     permission_classes = (IsAuthenticated,)
 
-    def get(self, request, pid):
-        project = get_object_or_404(Project, id=pid)
-        documents = project.document_set.all()
-        serialize = DocumentSerializer(documents, many=True)
-        return Response(serialize.data, status=201)
-    
-    def post(self, request, pid):
-        request.data['project_id'] = pid
-        serialize = DocumentSerializer(data=request.data)
-        if serialize.is_valid():
-            serialize.save()
+    def get(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try :
+            user = project.users.get(user=user) 
+            documents = project.document_set.all()
+            serialize = DocumentSerializer(documents, many=True)
             return Response(serialize.data, status=201)
-        else:
-            return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def post(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        request.data['project_id'] = project.id
+        try:
+            user = project.users.get(user=user)
+            serialize = DocumentSerializer(data=request.data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(serialize.data, status=201)
+            else:
+                return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
 
 class DocumentView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, docid):
-        data = get_object_or_404(Document, project_id=pid, document_id=docid)
-        serialize = DocumentSerializer(data)
-        return Response(serialize.data, status=201)
-    
-    def put(self, request, pid, docid):
-        document = get_object_or_404(Document, project_id=pid, document_id=docid)
-        data = request.data
-        serialize = DocumentSerializer(document, data=data)
-        if serialize.is_valid():
-            serialize.save()
-            return Response(status=201)
-        else:
+    def get(self, request, username, project_slug, docid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            data = get_object_or_404(Document, project_id=pid, document_id=docid)
+            serialize = DocumentSerializer(data)
+            return Response(serialize.data, status=201)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
             return Response(status=400)
     
-    def delete(self, request, pid, docid):
-        document = get_object_or_404(Document, project_id=pid, document_id=docid)
-        document.delete()
-        return Response(status=204)
+    def put(self, request, username, project_slug, docid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            document = get_object_or_404(Document, project_id=pid, document_id=docid)
+            data = request.data
+            serialize = DocumentSerializer(document, data=data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(status=201)
+            else:
+                return Response(status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def delete(self, request, username, project_slug, docid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            document = get_object_or_404(Document, project_id=pid, document_id=docid)
+            document.delete()
+            return Response(status=204)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
 
 class TaskListView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid):
-        project = get_object_or_404(Project, id=pid)
-        tasks = project.task_set.all()
-        serialize = TaskSerializer(tasks, many=True)
-        return Response(serialize.data, status=201)
 
-    def post(self, request, pid):
-        request.data['project_id'] = pid
-        serialize = TaskSerializer(data=request.data)
-        if serialize.is_valid():
-            serialize.save()
+    def get(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            tasks = project.task_set.all()
+            serialize = TaskSerializer(tasks, many=True)
             return Response(serialize.data, status=201)
-        else:
-            return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def post(self, request, username, project_slug):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            if user.id != project.project_manager_id:
+                raise  PermissionDenied
+            request.data['project_id'] = project.id
+            serialize = TaskSerializer(data=request.data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(serialize.data, status=201)
+            else:
+                return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+        except PermissionDenied:
+            return Response(status=400)
 
 class TaskView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, tid):
-        data = get_object_or_404(Task, project_id=pid, task_id=tid)
-        serialize = TaskSerializer(data)
-        return Response(serialize.data, status=201)
 
-    def put(self, request, pid, tid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        data = request.data
-        serialize = TaskSerializer(task, data=data)
-        if serialize.is_valid():
-            serialize.save()
-            return Response(status=201)
-        else:
+    def get(self, request, username, project_slug, tid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            data = get_object_or_404(Task, project_id=pid, task_id=tid)
+            serialize = TaskSerializer(data)
+            return Response(serialize.data, status=201)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
             return Response(status=400)
 
-    def delete(self, request, pid, docid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        task.delete()
-        return Response(status=204)
+    def put(self, request, username, project_slug, tid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            if user.id != project.project_manager_id:
+                raise PermissionDenied
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            data = request.data
+            serialize = TaskSerializer(task, data=data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(status=201)
+            else:
+                return Response(status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+        except PermissionDenied:
+            return Response(status=400)
+
+    def delete(self, request, username, project_slug, tid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            if user.id != project.project_manager_id:
+                raise PermissionDenied
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            task.delete()
+            return Response(status=204)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+        except PermissionDenied:
+            return Response(status=400)
 
 class SubtaskListView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, tid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtasks = task.subtask_set.all()
-        serialize = SubtaskSerializer(subtasks, many=True)
-        return Response(serialize.data, status=201)
 
-    def post(self, request, pid, tid):
-        request.data['project_id'] = pid
-        request.data['task_id'] = tid
-        serialize = SubtaskSerializer(data=request.data)
-        if serialize.is_valid():
-            serialize.save()
+    def get(self, request, username, project_slug, tid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtasks = task.subtask_set.all()
+            serialize = SubtaskSerializer(subtasks, many=True)
             return Response(serialize.data, status=201)
-        else:
-            return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def post(self, request, username, project_slug, tid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            request.data['project_id'] = pid
+            request.data['task_id'] = tid
+            serialize = SubtaskSerializer(data=request.data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(serialize.data, status=201)
+            else:
+                return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
 
 class SubtaskView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, tid, subid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        serialize = SubtaskSerializer(subtask)
-        return Response(serialize.data, status=201)
 
-    def put(self, request, pid, tid, subid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        data = request.data
-        serialize = SubtaskSerializer(subtask, data=data)
-        if serialize.is_valid():
-            serialize.save()
-            return Response(status=201)
-        else:
+    def get(self, request, username, project_slug, tid, subid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            serialize = SubtaskSerializer(subtask)
+            return Response(serialize.data, status=201)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
             return Response(status=400)
 
-    def delete(self, request, pid, tid, subid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        subtask.delete()
-        return Response(status=204)
+    def put(self, request, username, project_slug, tid, subid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            data = request.data
+            serialize = SubtaskSerializer(subtask, data=data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(status=201)
+            else:
+                return Response(status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def delete(self, request, username, project_slug, tid, subid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            subtask.delete()
+            return Response(status=204)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
 
 class SubtaskLogListView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, tid, subid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        subtask_logs = subtask.subtasklog_set.all()
-        serialize = SubtaskLogSerializer(subtask_logs, many=True)
-        return Response(serialize.data, status=201)
-
-    def post(self, request, pid, tid, subid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        request.data['subtask_id'] = subtask.id
-        serialize = SubtaskLogSerializer(data=request.data)
-        if serialize.is_valid():
-            serialize.save()
+    
+    def get(self, request, username, project_slug, tid, subid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            subtask_logs = subtask.subtasklog_set.all()
+            serialize = SubtaskLogSerializer(subtask_logs, many=True)
             return Response(serialize.data, status=201)
-        else:
-            return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def post(self, request, username, project_slug, tid, subid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            request.data['subtask_id'] = subtask.id
+            serialize = SubtaskLogSerializer(data=request.data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(serialize.data, status=201)
+            else:
+                return Response(serialize.errors, status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400) 
 
 
 class SubtaskLogView(APIView):
     permission_classes = (IsAuthenticated,)
-    def get(self, request, pid, tid, subid, sublogid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        sublog = get_object_or_404(SubtaskLog, subtask_id = subtask.id, sublog_id=sublogid)
-        serialize = SubtaskLogSerializer(sublog)
-        return Response(serialize.data, status=201)
 
-    def put(self, request, pid, tid, subid, sublogid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
-        data = request.data
-        serialize = SubtaskLogSerializer(sublog, data=data)
-        if serialize.is_valid():
-            serialize.save()
-            return Response(status=201)
-        else:
+    def get(self, request, username, project_slug, tid, subid, sublogid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            sublog = get_object_or_404(SubtaskLog, subtask_id = subtask.id, sublog_id=sublogid)
+            serialize = SubtaskLogSerializer(sublog)
+            return Response(serialize.data, status=201)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
             return Response(status=400)
 
-    def delete(self, request, pid, tid, subid, sublogid):
-        task = get_object_or_404(Task, project_id=pid, task_id=tid)
-        subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
-        sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
-        sublog.delete()
-        return Response(status=204)
+    def put(self, request, username, project_slug, tid, subid, sublogid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
+            data = request.data
+            serialize = SubtaskLogSerializer(sublog, data=data)
+            if serialize.is_valid():
+                serialize.save()
+                return Response(status=201)
+            else:
+                return Response(status=400)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)
+
+    def delete(self, request, username, project_slug, tid, subid, sublogid):
+        user = get_object_or_404(User, username=username)
+        project = get_object_or_404(Project, slug=project_slug)
+        try:
+            user = project.users.get(user=user)
+            pid = project.id
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            sublog = get_object_or_404(SubtaskLog, subtask_id=subtask.id, sublog_id=sublogid)
+            sublog.delete()
+            return Response(status=204)
+        except Profile.DoesNotExist:
+            return Response(status=400)
+        except Profile.MultipleObjectsReturned:
+            return Response(status=400)

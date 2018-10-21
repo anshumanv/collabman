@@ -7,7 +7,7 @@ django-allauth==0.38.0
 python-decouple==3.1
 psycopg2==2.7.5
 pytz==2018.5
-gunicorn = "*"
+gunicorn
 six==1.11.0
 ipython==7.0.1
-dj-database-url = "*"
+dj-database-url
