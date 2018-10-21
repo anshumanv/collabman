@@ -9,6 +9,7 @@ export const fetchTasks = project => {
         dispatch(tasksFetched(response.data));
       })
       .catch(err => {
+        console.log(err);
         dispatch(tasksFailed());
       });
   };

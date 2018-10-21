@@ -1,5 +1,5 @@
 import { projectActions } from '../constants';
-
+import { fetchTasks } from './taskActions';
 import { fetchUserProjects } from '../API/projects';
 
 export const getUserProjects = userId => {
@@ -9,7 +9,7 @@ export const getUserProjects = userId => {
       .then(response => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
-          dispatch(setCurrentProject(response.data[0]));
+          setCurrentProject(response.data[0]);
         }
       })
       .catch(err => {
@@ -34,6 +34,13 @@ const projectsFailed = () => {
 };
 
 export const setCurrentProject = curProject => {
+  return (dispatch, getState) => {
+    dispatch(updateProject(curProject));
+    dispatch(fetchTasks(curProject.id));
+  };
+};
+
+const updateProject = curProject => {
   return {
     type: projectActions.SET_CURRENT_PROJECT,
     curProject,
