@@ -36,7 +36,7 @@ const projectsFailed = () => {
 export const setCurrentProject = curProject => {
   return (dispatch, getState) => {
     dispatch(updateProject(curProject));
-    dispatch(fetchTasks(curProject.id)); // gommenasai
+    dispatch(fetchTasks('test', curProject.slug)); // gommenasai
   };
 };
 
