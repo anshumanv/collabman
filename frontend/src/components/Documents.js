@@ -96,7 +96,7 @@ class DocumentCard extends React.Component {
             </AppBar>
             <TabContainer>
               <List>
-                {docsObj[value + 1] &&
+                {docsObj[value + 1] ? (
                   docsObj[value + 1].map(somedoc => (
                     <ListItem key={somedoc.document_id}>
                       <ListItemAvatar>
@@ -114,7 +114,10 @@ class DocumentCard extends React.Component {
                         </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
-                  ))}
+                  ))
+                ) : (
+                  <div>Nothing here \ (•◡•) /</div>
+                )}
               </List>
             </TabContainer>
           </div>
