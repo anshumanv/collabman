@@ -3,7 +3,6 @@ import { API_URL } from '../constants';
 
 // Get user projects
 export const fetchProjectTasks = (username, projectSlug) => {
-  console.log(username, projectSlug);
   return axios.get(
     `${API_URL}/api/v1/${username}/project/${projectSlug}/task/`,
     {

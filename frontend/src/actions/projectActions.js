@@ -1,5 +1,6 @@
 import { projectActions } from '../constants';
 import { fetchTasks } from './taskActions';
+import { fetchDocuments } from './documentActions';
 import { fetchUserProjects } from '../API/projects';
 
 export const getUserProjects = username => {
@@ -37,6 +38,7 @@ export const setCurrentProject = curProject => {
   return (dispatch, getState) => {
     dispatch(updateProject(curProject));
     dispatch(fetchTasks('test', curProject.slug)); // gommenasai
+    dispatch(fetchDocuments('test', curProject.slug)); // gommenasai
   };
 };
 
