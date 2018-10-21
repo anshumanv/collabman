@@ -46,10 +46,6 @@ class TasksCard extends Component {
     };
   }
 
-  componentDidMount() {
-    this.props.fetchProjectTasks(1);
-  }
-
   handleClick = () => {
     this.setState(state => ({ open: !state.open }));
   };

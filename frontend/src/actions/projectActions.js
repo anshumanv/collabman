@@ -9,7 +9,7 @@ export const getUserProjects = userId => {
       .then(response => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
-          setCurrentProject(response.data[0]);
+          dispatch(setCurrentProject(response.data[0]));
         }
       })
       .catch(err => {
@@ -36,7 +36,7 @@ const projectsFailed = () => {
 export const setCurrentProject = curProject => {
   return (dispatch, getState) => {
     dispatch(updateProject(curProject));
-    dispatch(fetchTasks(curProject.id));
+    dispatch(fetchTasks(curProject.id)); // gommenasai
   };
 };
 
