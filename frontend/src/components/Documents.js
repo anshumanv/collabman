@@ -1,14 +1,23 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Card from '@material-ui/core/Card';
-import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Tab from '@material-ui/core/Tab';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Button from '@material-ui/core/Button';
+import FolderIcon from '@material-ui/icons/Folder';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 function TabContainer(props) {
   return (
@@ -44,10 +53,25 @@ class DocumentCard extends React.Component {
     this.setState({ value });
   };
 
-  render() {
-    const { classes } = this.props;
-    const { value } = this.state;
+  generate = element => {
+    return [0, 1, 2].map(value =>
+      React.cloneElement(element, {
+        key: value,
+      }),
+    );
+  };
 
+  render() {
+    const { classes, docs } = this.props;
+    const { value } = this.state;
+    const docsObj = {};
+    if (docs.docs) {
+      docs.docs.map(doc => {
+        let doctemp = docsObj[doc.template_link] || [];
+        docsObj[doc.template_link] = [...doctemp, doc];
+      });
+    }
+    console.log(docsObj);
     return (
       <Card className={classes.card}>
         <CardContent>
@@ -70,17 +94,32 @@ class DocumentCard extends React.Component {
                 <Tab label="Misc" />
               </Tabs>
             </AppBar>
-            {value === 0 && (
-              <TabContainer>
-                Meetings{' '}
-                <Button href="/schedule_meeting" className={classes.button}>
-                  Link
-                </Button>
-              </TabContainer>
-            )}
-            {value === 1 && <TabContainer>Proposal</TabContainer>}
-            {value === 2 && <TabContainer>Plans go here</TabContainer>}
-            {value === 3 && <TabContainer>Misc content</TabContainer>}
+            <TabContainer>
+              <List>
+                {docsObj[value + 1] ? (
+                  docsObj[value + 1].map(somedoc => (
+                    <ListItem key={somedoc.document_id}>
+                      <ListItemAvatar>
+                        <Avatar>
+                          <FolderIcon />
+                        </Avatar>
+                      </ListItemAvatar>
+                      <ListItemText
+                        primary={somedoc.document_title}
+                        secondary={somedoc.document_id}
+                      />
+                      <ListItemSecondaryAction>
+                        <IconButton aria-label="Delete">
+                          <DeleteIcon />
+                        </IconButton>
+                      </ListItemSecondaryAction>
+                    </ListItem>
+                  ))
+                ) : (
+                  <div>Nothing here \ (•◡•) /</div>
+                )}
+              </List>
+            </TabContainer>
           </div>
         </CardContent>
       </Card>
@@ -90,6 +129,20 @@ class DocumentCard extends React.Component {
 
 DocumentCard.propTypes = {
   classes: PropTypes.object.isRequired,
+  docs: PropTypes.array,
 };
 
-export default withStyles(styles)(DocumentCard);
+const mapStateToProps = state => {
+  return {
+    docs: state.documents,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {};
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(DocumentCard));
