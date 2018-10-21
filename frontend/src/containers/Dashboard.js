@@ -43,6 +43,7 @@ const styles = theme => ({
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
+    backgroundColor: '#162630',
   },
   drawerPaper: {
     position: 'relative',

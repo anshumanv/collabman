@@ -78,7 +78,7 @@ class Contributions extends Component {
               cy={200}
               innerRadius={80}
               outerRadius={120}
-              fill="#8884d8"
+              fill="#00af5b"
               onMouseEnter={this.onPieEnter}
             />
           </PieChart>
