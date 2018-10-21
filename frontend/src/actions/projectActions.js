@@ -2,10 +2,10 @@ import { projectActions } from '../constants';
 import { fetchTasks } from './taskActions';
 import { fetchUserProjects } from '../API/projects';
 
-export const getUserProjects = userId => {
+export const getUserProjects = username => {
   return (dispatch, getState) => {
     dispatch(projectsLoading());
-    return fetchUserProjects(userId)
+    return fetchUserProjects(username)
       .then(response => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {

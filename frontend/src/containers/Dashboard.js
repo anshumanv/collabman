@@ -65,7 +65,7 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    this.props.getUserProjects(1);
+    this.props.getUserProjects('test');
     this.props.fetchContributors('ongaku-desktop');
   }
 
