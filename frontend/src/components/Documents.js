@@ -8,6 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
 
 function TabContainer(props) {
   return (
@@ -69,7 +70,14 @@ class DocumentCard extends React.Component {
                 <Tab label="Misc" />
               </Tabs>
             </AppBar>
-            {value === 0 && <TabContainer>Meetings</TabContainer>}
+            {value === 0 && (
+              <TabContainer>
+                Meetings{' '}
+                <Button href="/schedule_meeting" className={classes.button}>
+                  Link
+                </Button>
+              </TabContainer>
+            )}
             {value === 1 && <TabContainer>Proposal</TabContainer>}
             {value === 2 && <TabContainer>Plans go here</TabContainer>}
             {value === 3 && <TabContainer>Misc content</TabContainer>}

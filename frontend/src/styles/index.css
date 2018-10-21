@@ -3,3 +3,9 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+.profile-description {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
