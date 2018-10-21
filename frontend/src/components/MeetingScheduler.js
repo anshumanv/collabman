@@ -17,27 +17,7 @@ import CalendarToday from '@material-ui/icons/CalendarToday';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 
-var meeting = {
-  summary: 'Meeting # here',
-  location: 'Enter location',
-  description: 'One line description',
-  start: {
-    dateTime: '2018-10-24T09:00:00+05:30',
-    timeZone: 'Asia/Kolkata',
-  },
-  end: {
-    dateTime: '2018-10-24T17:00:00+05:30',
-    timeZone: 'Asia/Kolkata',
-  },
-  attendees: [{ email: '201651062@iiitvadodara.ac.in' }],
-  reminders: {
-    useDefault: false,
-    overrides: [
-      { method: 'email', minutes: 24 * 60 },
-      { method: 'popup', minutes: 10 },
-    ],
-  },
-};
+import gapi from 'gapi-client';
 
 const styles = theme => ({
   root: {
@@ -84,9 +64,21 @@ const styles = theme => ({
 });
 
 class MeetingScheduler extends Component {
+  componentDidMount() {
+    gapi.load('client:auth2', () => {
+      gapi.auth2.init({
+        client_id:
+          '90482360144-unjb8jaj1i47r5lvc0h5vph4sfnvm4t2.apps.googleusercontent.com',
+      });
+    });
+  }
+
   state = {
     auth: true,
     anchorEl: null,
+    purpose: '',
+    date: '',
+    time: '',
   };
 
   handleMenu = event => {
@@ -96,6 +88,79 @@ class MeetingScheduler extends Component {
   handleClose = () => {
     this.setState({ anchorEl: null });
     window.location = '/project/<id>';
+  };
+
+  handleSubmit = () => {
+    console.log('button works');
+  };
+
+  authenticate = () => {
+    let self = this;
+    return gapi.auth2
+      .getAuthInstance()
+      .signIn({
+        scope:
+          'https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events',
+      })
+      .then(
+        function() {
+          console.log('Sign-in successful');
+          self.execute();
+        },
+        function(err) {
+          console.error('Error signing in', err);
+        },
+      )
+      .then(this.loadClient());
+  };
+  loadClient = () => {
+    return gapi.client
+      .load('https://content.googleapis.com/discovery/v1/apis/calendar/v3/rest')
+      .then(
+        function() {
+          console.log('GAPI client loaded for API');
+        },
+        function(err) {
+          console.error('Error loading GAPI client for API', err);
+        },
+      );
+  };
+  // Make sure the client is loaded and sign-in is complete before calling this method.
+  execute = () => {
+    return gapi.client.calendar.events
+      .insert({
+        calendarId: 'primary',
+        conferenceDataVersion: 1,
+        sendNotifications: true,
+        sendUpdates: 'none',
+        supportsAttachments: false,
+        start: {
+          dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
+          timeZone: 'Asia/Kolkata',
+        },
+        end: {
+          dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
+          timeZone: 'Asia/Kolkata',
+        },
+        summary: `${this.state.purpose}`,
+      })
+      .then(
+        function(response) {
+          // Handle the results here (response.result has the parsed body).
+          console.log('Response', response);
+        },
+        function(err) {
+          console.error('Execute error', err);
+        },
+      );
+  };
+
+  handleMeetingSchedule = input => event => {
+    if (event.target.id === 'meeting-purpose')
+      this.setState({ [input]: event.target.value });
+    else if (event.target.id === 'meeting-date')
+      this.setState({ [input]: event.target.value });
+    else this.setState({ [input]: event.target.value });
   };
 
   render() {
@@ -152,32 +217,27 @@ class MeetingScheduler extends Component {
               Schedule Meeting
             </Typography>
             <TextField
-              id="outlined-with-placeholder"
-              label="Meeting Number"
-              placeholder="Meeting Number"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="outlined-with-placeholder"
+              id="meeting-purpose"
               label="Purpose"
+              onChange={this.handleMeetingSchedule('purpose')}
               placeholder="Purpose for scheduling"
               className={classes.textField}
               margin="normal"
               variant="outlined"
             />
             <TextField
-              id="outlined-with-placeholder"
+              id="meeting-date"
               label="Meeting Date"
-              placeholder="dd-mm-yyyy"
+              placeholder="yyyy-mm-dd"
+              onChange={this.handleMeetingSchedule('date')}
               className={classes.textField}
               margin="normal"
               variant="outlined"
             />
             <TextField
-              id="outlined-with-placeholder"
+              id="meeting-time"
               label="Meeting Time"
+              onChange={this.handleMeetingSchedule('time')}
               placeholder="hh:mm"
               className={classes.textField}
               margin="normal"
@@ -188,6 +248,7 @@ class MeetingScheduler extends Component {
               color="primary"
               aria-label="Add"
               className={classes.button}
+              onClick={() => this.authenticate()}
             >
               <CalendarToday />
             </Button>
