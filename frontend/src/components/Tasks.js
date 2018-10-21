@@ -55,8 +55,12 @@ class TasksCard extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, tasks } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
+    let tasksList = [];
+    if (tasks) {
+      tasksList = tasks.tasks;
+    }
 
     return (
       <Card className={classes.card}>
@@ -66,35 +70,14 @@ class TasksCard extends Component {
           </Typography>
           <div className={classes.root}>
             <List component="nav">
-              <ListItem button>
-                <ListItemIcon>
-                  <SendIcon />
-                </ListItemIcon>
-                <ListItemText inset primary="Task 1" />
-              </ListItem>
-              <ListItem button>
-                <ListItemIcon>
-                  <DraftsIcon />
-                </ListItemIcon>
-                <ListItemText inset primary="Task 2" />
-              </ListItem>
-              <ListItem button onClick={this.handleClick}>
-                <ListItemIcon>
-                  <InboxIcon />
-                </ListItemIcon>
-                <ListItemText inset primary="Task 3" />
-                {this.state.open ? <ExpandLess /> : <ExpandMore />}
-              </ListItem>
-              <Collapse in={this.state.open} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItem button className={classes.nested}>
-                    <ListItemIcon>
-                      <StarBorder />
-                    </ListItemIcon>
-                    <ListItemText inset primary="Subtask 1" />
-                  </ListItem>
-                </List>
-              </Collapse>
+              {tasksList.map(task => (
+                <ListItem key={task.id} button>
+                  <ListItemIcon>
+                    <SendIcon />
+                  </ListItemIcon>
+                  <ListItemText inset primary={task.task_description} />
+                </ListItem>
+              ))}
             </List>
           </div>
         </CardContent>
@@ -106,10 +89,13 @@ class TasksCard extends Component {
 TasksCard.propTypes = {
   classes: PropTypes.object.isRequired,
   fetchProjectTasks: PropTypes.func,
+  tasks: PropTypes.object,
 };
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    tasks: state.tasks,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
