@@ -18,8 +18,8 @@ import BluetoothIcon from '@material-ui/icons/Bluetooth';
 import Divider from '@material-ui/core/Divider';
 import { withStyles } from '@material-ui/core/styles';
 
-// Sample data, use api to fethc stuff
-import { mailFolderListItems, otherMailFolderListItems } from './tileData';
+//Actions
+import { setCurrentProject } from '../actions/projectActions';
 
 const drawerWidth = 240;
 
@@ -58,7 +58,11 @@ class Sidebar extends Component {
           <List>
             <div>
               {projectsData.map(project => (
-                <ListItem button key={project.project_name}>
+                <ListItem
+                  button
+                  key={project.project_name}
+                  onClick={() => this.props.switchProject(project)}
+                >
                   <ListItemIcon>
                     <InboxIcon />
                   </ListItemIcon>
@@ -92,6 +96,7 @@ class Sidebar extends Component {
 Sidebar.propTypes = {
   classes: PropTypes.object.isRequired,
   projects: PropTypes.array,
+  switchProject: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -101,7 +106,11 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    switchProject: project => {
+      return dispatch(setCurrentProject(project));
+    },
+  };
 };
 
 export default connect(

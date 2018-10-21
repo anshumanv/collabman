@@ -33,7 +33,7 @@ const projectsFailed = () => {
   return { type: projectActions.FETCH_USER_PROJECT_FAILED };
 };
 
-const setCurrentProject = curProject => {
+export const setCurrentProject = curProject => {
   return {
     type: projectActions.SET_CURRENT_PROJECT,
     curProject,
