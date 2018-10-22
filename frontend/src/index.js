@@ -7,7 +7,6 @@ import thunk from 'redux-thunk';
 
 import RootReducer from './reducers';
 import App from './components/App';
-import MeetingScheduler from './components/MeetingScheduler';
 import NotFound from './containers/NotFound';
 import NewProject from './containers/NewProject';
 import Dashboard from './containers/Dashboard';
@@ -29,10 +28,9 @@ ReactDOM.render(
         <Switch>
           <Route exact path="/" component={App} />
           <Route exact path="/new" component={NewProject} />
-          <Route exact path="/project/:projectId" component={Dashboard} />
+          <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/profile/:username" component={Profile} />
           <Route exact path="/auth" component={Auth} />
-          <Route exact path="/schedule_meeting" component={MeetingScheduler} />
           <Route exact path="*" component={NotFound} />
         </Switch>
       </div>

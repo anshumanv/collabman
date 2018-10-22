@@ -16,16 +16,11 @@ import Button from '@material-ui/core/Button';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
+import CloseIcon from '@material-ui/icons/Close';
 
 import gapi from 'gapi-client';
 
 const styles = theme => ({
-  root: {
-    flexGrow: 1,
-    maxWidth: '100vw',
-    height: '100vh',
-    overflow: 'hidden',
-  },
   grow: {
     flexGrow: 1,
   },
@@ -33,14 +28,7 @@ const styles = theme => ({
     marginLeft: -12,
     marginRight: 20,
   },
-  container: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    height: '100vh',
-    width: '100vw',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+
   input: {
     margin: theme.spacing.unit,
     marginTop: '10px',
@@ -59,7 +47,7 @@ const styles = theme => ({
     marginRight: theme.spacing.unit,
   },
   button: {
-    marginTop: '20px',
+    margin: theme.spacing.unit,
   },
 });
 
@@ -76,13 +64,10 @@ class MeetingScheduler extends Component {
   state = {
     auth: true,
     anchorEl: null,
+    title: '',
     purpose: '',
     date: '',
     time: '',
-  };
-
-  handleMenu = event => {
-    this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
@@ -142,7 +127,8 @@ class MeetingScheduler extends Component {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
         },
-        summary: `${this.state.purpose}`,
+        description: `${this.state.purpose}`,
+        summary: `${this.state.title},`,
       })
       .then(
         function(response) {
@@ -156,7 +142,9 @@ class MeetingScheduler extends Component {
   };
 
   handleMeetingSchedule = input => event => {
-    if (event.target.id === 'meeting-purpose')
+    if (event.target.id === 'meeting-title')
+      this.setState({ [input]: event.target.value });
+    else if (event.target.id === 'meeting-purpose')
       this.setState({ [input]: event.target.value });
     else if (event.target.id === 'meeting-date')
       this.setState({ [input]: event.target.value });
@@ -169,80 +157,48 @@ class MeetingScheduler extends Component {
     const open = Boolean(anchorEl);
 
     return (
-      <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.grow}
-            >
-              collabman
-            </Typography>
-            {auth && (
-              <div>
-                <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <MenuItem onClick={this.handleClose}>Projects</MenuItem>
-                  <MenuItem onClick={this.switchToHomeScreen}>Logout</MenuItem>
-                </Menu>
-              </div>
-            )}
-          </Toolbar>
-        </AppBar>
-
-        <div className={classes.container}>
-          <form action="" className={classes.form}>
-            <Typography variant="headline" component="h2">
-              Schedule Meeting
-            </Typography>
-            <TextField
-              id="meeting-purpose"
-              label="Purpose"
-              onChange={this.handleMeetingSchedule('purpose')}
-              placeholder="Purpose for scheduling"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="meeting-date"
-              label="Meeting Date"
-              placeholder="yyyy-mm-dd"
-              onChange={this.handleMeetingSchedule('date')}
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
-            <TextField
-              id="meeting-time"
-              label="Meeting Time"
-              onChange={this.handleMeetingSchedule('time')}
-              placeholder="hh:mm"
-              className={classes.textField}
-              margin="normal"
-              variant="outlined"
-            />
+      <div className={classes.container}>
+        <form action="" className={classes.form}>
+          <Typography variant="headline" component="h2">
+            Schedule Meeting
+          </Typography>
+          <TextField
+            id="meeting-title"
+            label="Title"
+            onChange={this.handleMeetingSchedule('title')}
+            placeholder="Give a suitable title"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="meeting-purpose"
+            label="Purpose"
+            onChange={this.handleMeetingSchedule('purpose')}
+            placeholder="Purpose for scheduling"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="meeting-date"
+            label="Meeting Date"
+            placeholder="yyyy-mm-dd"
+            onChange={this.handleMeetingSchedule('date')}
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
+            id="meeting-time"
+            label="Meeting Time"
+            onChange={this.handleMeetingSchedule('time')}
+            placeholder="hh:mm"
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <div>
             <Button
               variant="fab"
               color="primary"
@@ -252,8 +208,8 @@ class MeetingScheduler extends Component {
             >
               <CalendarToday />
             </Button>
-          </form>
-        </div>
+          </div>
+        </form>
       </div>
     );
   }

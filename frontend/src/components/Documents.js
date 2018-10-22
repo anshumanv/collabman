@@ -7,6 +7,7 @@ import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
 import Tab from '@material-ui/core/Tab';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -18,6 +19,10 @@ import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FolderIcon from '@material-ui/icons/Folder';
 import DeleteIcon from '@material-ui/icons/Delete';
+import Button from '@material-ui/core/Button';
+import Modal from '@material-ui/core/Modal';
+import CloseIcon from '@material-ui/icons/Close';
+import MeetingScheduler from './MeetingScheduler';
 
 function TabContainer(props) {
   return (
@@ -42,11 +47,33 @@ const styles = theme => ({
     minWidth: 275,
     marginTop: '20px',
   },
+
+  container: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    height: '80vh',
+    width: '60vw',
+    marginTop: '10vh',
+    marginLeft: '35vh',
+    marginBottom: '10vh',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });
 
 class DocumentCard extends React.Component {
   state = {
     value: 0,
+    modalOpen: false,
+  };
+
+  handleOpen = () => {
+    this.setState({ modalOpen: true });
+  };
+
+  handleClose = () => {
+    this.setState({ modalOpen: false });
   };
 
   handleChange = (event, value) => {
@@ -78,6 +105,18 @@ class DocumentCard extends React.Component {
           <Typography className={classes.title} color="textSecondary">
             Project Documents
           </Typography>
+          <CardActions>
+            <Button onClick={() => this.handleOpen()}>
+              Schedule A Meeting
+            </Button>
+            <Modal open={this.state.modalOpen} onClose={this.handleClose}>
+              <div className={classes.container}>
+                <div>
+                  <MeetingScheduler />
+                </div>
+              </div>
+            </Modal>
+          </CardActions>
           <div className={classes.root}>
             <AppBar position="static" color="default">
               <Tabs
