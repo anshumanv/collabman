@@ -17,6 +17,7 @@ import CalendarToday from '@material-ui/icons/CalendarToday';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import CloseIcon from '@material-ui/icons/Close';
+import Snackbar from '@material-ui/core/Snackbar';
 
 import gapi from 'gapi-client';
 
@@ -49,6 +50,9 @@ const styles = theme => ({
   button: {
     margin: theme.spacing.unit,
   },
+  icon: {
+    fontSize: 20,
+  },
 });
 
 class MeetingScheduler extends Component {
@@ -67,7 +71,8 @@ class MeetingScheduler extends Component {
     title: '',
     purpose: '',
     date: '',
-    time: '',
+    time: '09:00',
+    showAlert: false,
   };
 
   handleClose = () => {
@@ -117,12 +122,16 @@ class MeetingScheduler extends Component {
         calendarId: 'primary',
         conferenceDataVersion: 1,
         sendNotifications: true,
-        sendUpdates: 'none',
+        sendUpdates: 'all',
         supportsAttachments: false,
         start: {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
         },
+        attendees: [
+          { email: 'anshu.av97@gmail.com' },
+          { email: '201651062@iiitvadodara.ac.in' },
+        ],
         end: {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
@@ -146,9 +155,24 @@ class MeetingScheduler extends Component {
       this.setState({ [input]: event.target.value });
     else if (event.target.id === 'meeting-purpose')
       this.setState({ [input]: event.target.value });
-    else if (event.target.id === 'meeting-date')
+    else if (event.target.id === 'meeting-date') {
       this.setState({ [input]: event.target.value });
-    else this.setState({ [input]: event.target.value });
+    } else this.setState({ [input]: event.target.value });
+  };
+
+  validateForm = event => {
+    event.preventDefault();
+    if (
+      this.state.title === '' ||
+      this.state.purpose === '' ||
+      this.state.date === ''
+    ) {
+      console.log('empty');
+      this.setState({ showAlert: true });
+      return 0;
+    }
+    console.log(this.state.date);
+    this.authenticate();
   };
 
   render() {
@@ -158,13 +182,14 @@ class MeetingScheduler extends Component {
 
     return (
       <div className={classes.container}>
-        <form action="" className={classes.form}>
+        <form action="" className={classes.form} onSubmit={this.validateForm}>
           <Typography variant="headline" component="h2">
             Schedule Meeting
           </Typography>
           <TextField
             id="meeting-title"
             label="Title"
+            type="text"
             onChange={this.handleMeetingSchedule('title')}
             placeholder="Give a suitable title"
             className={classes.textField}
@@ -174,6 +199,7 @@ class MeetingScheduler extends Component {
           <TextField
             id="meeting-purpose"
             label="Purpose"
+            type="text"
             onChange={this.handleMeetingSchedule('purpose')}
             placeholder="Purpose for scheduling"
             className={classes.textField}
@@ -183,33 +209,41 @@ class MeetingScheduler extends Component {
           <TextField
             id="meeting-date"
             label="Meeting Date"
-            placeholder="yyyy-mm-dd"
+            type="date"
+            defaultValue="1999-12-31"
             onChange={this.handleMeetingSchedule('date')}
-            className={classes.textField}
+            className={classes.TextField}
             margin="normal"
             variant="outlined"
           />
           <TextField
             id="meeting-time"
             label="Meeting Time"
+            type="time"
+            defaultValue="09:00"
             onChange={this.handleMeetingSchedule('time')}
-            placeholder="hh:mm"
-            className={classes.textField}
+            className={classes.TextField}
             margin="normal"
             variant="outlined"
           />
           <div>
             <Button
               variant="fab"
+              type="submit"
               color="primary"
               aria-label="Add"
               className={classes.button}
-              onClick={() => this.authenticate()}
             >
               <CalendarToday />
             </Button>
           </div>
         </form>
+        <Snackbar
+          anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+          open={this.state.showAlert}
+          onClose={() => this.setState({ showAlert: false })}
+          message={<span>Add the necessary fields</span>}
+        />
       </div>
     );
   }
