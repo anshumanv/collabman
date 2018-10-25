@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Drawer from '@material-ui/core/Drawer';
 import List from '@material-ui/core/List';
+import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -58,15 +59,17 @@ class Sidebar extends Component {
         }}
       >
         <div className={classes.toolbar} />
-        <Button
-          className={classes.newButton}
-          variant="outlined"
-          color="primary"
-          aria-label="Delete"
-        >
-          <AddIcon />
-          New Project
-        </Button>
+        <Link to="/new">
+          <Button
+            className={classes.newButton}
+            variant="outlined"
+            color="primary"
+            aria-label="Delete"
+          >
+            <AddIcon />
+            New Project
+          </Button>
+        </Link>
         <div className={classes.drawerSection}>My Projects</div>
         {projectsData && (
           <List>
