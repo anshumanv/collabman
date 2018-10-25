@@ -5,3 +5,4 @@ staticfiles
 *.sqlite3
 assets/bundles
 .vscode
+webpack-stats.dev.json
