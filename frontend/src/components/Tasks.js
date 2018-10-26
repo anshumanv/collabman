@@ -18,12 +18,15 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Collapse from '@material-ui/core/Collapse';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
 import SendIcon from '@material-ui/icons/Send';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
@@ -118,6 +121,11 @@ class TasksCard extends Component {
                     <SendIcon />
                   </ListItemIcon>
                   <ListItemText inset primary={task.task_description} />
+                  <ListItemSecondaryAction>
+                    <IconButton aria-label="Delete">
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
                 </ListItem>
               ))}
             </List>
