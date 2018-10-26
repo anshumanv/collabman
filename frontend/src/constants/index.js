@@ -23,6 +23,9 @@ export const githubActions = {
 export const taskActions = {
   FETCH_TASKS_SUCCESS: 'FETCH_TASKS_SUCCESS',
   FETCH_TASKS_FAILED: 'FETCH_TASKS_FAILED',
+  TASK_POST_SUCCESS: 'TASK_POST_SUCCESS',
+  TASK_POST_FAILED: 'TASK_POST_FAILED',
+  TASK_POSTING: 'TASK_POSTING',
 };
 
 export const documentActions = {

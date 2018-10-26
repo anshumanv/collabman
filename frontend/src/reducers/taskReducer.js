@@ -3,6 +3,8 @@ import { taskActions } from '../constants';
 const initialState = {
   tasks: [],
   tasksLoaded: false,
+  newTask: {},
+  postingNewTask: false,
 };
 
 export const taskReducer = (state = initialState, action) => {
@@ -12,6 +14,10 @@ export const taskReducer = (state = initialState, action) => {
       return { ...state, tasks: action.tasks, tasksLoaded: true };
     case taskActions.FETCH_TASKS_FAILED:
       return state;
+    case taskActions.TASK_POST_SUCCESS:
+      return { ...state, postingNewTask: false, newTask: action.newTask };
+    case taskActions.TASK_POST_FAILED:
+      return { ...state, postingNewTask: false };
     default:
       return state;
   }

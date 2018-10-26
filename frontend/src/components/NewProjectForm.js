@@ -122,7 +122,7 @@ class NewProjectForm extends Component {
         </form>
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={errors !== ''}
+          open={errors !== undefined}
           autoHideDuration={40}
         >
           <SnackbarContent

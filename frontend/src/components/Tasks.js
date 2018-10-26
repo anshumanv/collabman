@@ -30,7 +30,7 @@ import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
 
 // Actions
-import { fetchTasks, addTask } from '../actions/taskActions';
+import { fetchTasks, postNewTask } from '../actions/taskActions';
 
 const styles = theme => ({
   root: {
@@ -49,6 +49,8 @@ const styles = theme => ({
 class TasksCard extends Component {
   state = {
     open: false,
+    taskTitle: '',
+    taskDescription: '',
   };
 
   handleClickOpen = () => {
@@ -57,6 +59,29 @@ class TasksCard extends Component {
 
   handleClose = () => {
     this.setState({ open: false });
+  };
+
+  handleFormUpdates = (event, input) => {
+    if (event.target.id === 'task-title')
+      this.setState({ [input]: event.target.value });
+    else if (event.target.id === 'task-content')
+      this.setState({ [input]: event.target.value });
+  };
+
+  submitNewTask = () => {
+    let newTaskId = 0;
+
+    // calculate new task id in the frontend, shift it to the backend
+    this.props.tasks.tasks.forEach(task => {
+      newTaskId = Math.max(newTaskId, task.id);
+    });
+    const newTaskPayload = {
+      task_title: this.state.taskTitle,
+      task_description: this.state.taskDescription,
+      task_id: newTaskId + 1,
+    };
+    console.log(newTaskPayload);
+    this.props.submitTask(newTaskPayload);
   };
 
   render() {
@@ -109,14 +134,16 @@ class TasksCard extends Component {
             <TextField
               autoFocus
               margin="dense"
-              id="name"
+              id="task-title"
+              onChange={e => this.handleFormUpdates(e, 'taskTitle')}
               label="Task Title"
               type="text"
               fullWidth
             />
             <TextField
               margin="dense"
-              id="name"
+              id="task-content"
+              onChange={e => this.handleFormUpdates(e, 'taskDescription')}
               label="Task Content"
               type="text"
               fullWidth
@@ -126,7 +153,7 @@ class TasksCard extends Component {
             <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={this.handleClose} color="primary">
+            <Button onClick={this.submitNewTask} color="primary">
               Submit
             </Button>
           </DialogActions>
@@ -140,6 +167,7 @@ TasksCard.propTypes = {
   classes: PropTypes.object.isRequired,
   fetchProjectTasks: PropTypes.func,
   tasks: PropTypes.object,
+  submitTask: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -152,6 +180,9 @@ const mapDispatchToProps = dispatch => {
   return {
     fetchProjectTasks: project => {
       return dispatch(fetchTasks(project));
+    },
+    submitTask: payload => {
+      return dispatch(postNewTask(payload));
     },
   };
 };
