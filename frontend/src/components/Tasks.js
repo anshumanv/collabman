@@ -10,10 +10,16 @@ import Button from '@material-ui/core/Button';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
+import TextField from '@material-ui/core/TextField';
 import ListItem from '@material-ui/core/ListItem';
 import AddIcon from '@material-ui/icons/Add';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import Collapse from '@material-ui/core/Collapse';
 import InboxIcon from '@material-ui/icons/MoveToInbox';
 import DraftsIcon from '@material-ui/icons/Drafts';
@@ -41,15 +47,16 @@ const styles = theme => ({
 });
 
 class TasksCard extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      open: true,
-    };
-  }
+  state = {
+    open: false,
+  };
 
-  handleClick = () => {
-    this.setState(state => ({ open: !state.open }));
+  handleClickOpen = () => {
+    this.setState({ open: true });
+  };
+
+  handleClose = () => {
+    this.setState({ open: false });
   };
 
   render() {
@@ -73,6 +80,7 @@ class TasksCard extends Component {
               color="primary"
               aria-label="Add"
               className={classes.button}
+              onClick={this.handleClickOpen}
             >
               <AddIcon />
             </Button>
@@ -90,6 +98,39 @@ class TasksCard extends Component {
             </List>
           </div>
         </CardContent>
+        <Dialog
+          open={this.state.open}
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">New Task</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Please enter the task details</DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="name"
+              label="Task Title"
+              type="text"
+              fullWidth
+            />
+            <TextField
+              margin="dense"
+              id="name"
+              label="Task Content"
+              type="text"
+              fullWidth
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={this.handleClose} color="primary">
+              Submit
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Card>
     );
   }
