@@ -40,6 +40,7 @@ class NewProjectForm extends Component {
     projectName: '',
     repoLink: '',
     projectMembers: [],
+    showAlert: false,
   };
   static propTypes = {
     classes: PropTypes.object.isRequired,
@@ -69,7 +70,8 @@ class NewProjectForm extends Component {
   };
 
   render() {
-    const { classes } = this.props;
+    const { classes, errors } = this.props;
+    const { showAlert } = this.state;
     return (
       <div>
         <form action="" className={classes.form} onSubmit={this.submitProject}>
@@ -120,8 +122,8 @@ class NewProjectForm extends Component {
         </form>
         <Snackbar
           anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-          open={this.state.showAlert}
-          autoHideDuration={4000}
+          open={errors !== ''}
+          autoHideDuration={40}
         >
           <SnackbarContent
             variant="error"
