@@ -1,8 +1,9 @@
 import { projectActions } from '../constants';
 import { fetchTasks } from './taskActions';
 import { fetchDocuments } from './documentActions';
-import { fetchUserProjects } from '../API/projects';
+import { fetchUserProjects, createProject } from '../API/projects';
 
+// Function to fetch user projects
 export const getUserProjects = username => {
   return (dispatch, getState) => {
     dispatch(projectsLoading());
@@ -47,4 +48,38 @@ const updateProject = curProject => {
     type: projectActions.SET_CURRENT_PROJECT,
     curProject,
   };
+};
+
+export const createNewProject = payload => {
+  return (dispatch, getState) => {
+    dispatch(creatingNewProject());
+    console.log(payload);
+    return createProject('test', payload)
+      .then(response => {
+        dispatch(projectsCreationSucceed(response.data));
+        console.log(response);
+      })
+      .catch(err => {
+        console.log(err.response.request.response);
+        dispatch(projectsCreationFailed(err.response.request.responseText));
+      });
+  };
+};
+
+const creatingNewProject = () => {
+  return {
+    type: projectActions.CREATING_NEW_PROJECT,
+    creatingNewProject: true,
+  };
+};
+
+const projectsCreationSucceed = newProject => {
+  return {
+    type: projectActions.CREATE_NEW_PROJECT_SUCCESS,
+    payload: newProject,
+  };
+};
+
+const projectsCreationFailed = err => {
+  return { type: projectActions.CREATE_NEW_PROJECT_FAILED, creationError: err };
 };

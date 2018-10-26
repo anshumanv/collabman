@@ -4,6 +4,9 @@ const initialState = {
   projects: [],
   isLoaded: false,
   currentProject: null,
+  newProject: [],
+  creatingNewProject: false,
+  creationError: '',
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -14,6 +17,20 @@ export const projectReducer = (state = initialState, action) => {
       return { isLoaded: false };
     case projectActions.SET_CURRENT_PROJECT:
       return { ...state, currentProject: action.curProject };
+    case projectActions.CREATE_NEW_PROJECT_SUCCESS:
+      return {
+        ...state,
+        newProject: action.payload,
+        creatingNewProject: false,
+      };
+    case projectActions.CREATE_NEW_PROJECT_FAILED:
+      return {
+        ...state,
+        creatingNewProject: false,
+        creationError: action.creationError,
+      };
+    case projectActions.CREATING_NEW_PROJECT:
+      return { ...state, creatingNewProject: true };
     default:
       return state;
   }

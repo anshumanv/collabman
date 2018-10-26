@@ -98,7 +98,6 @@ class DocumentCard extends React.Component {
         docsObj[doc.template_link] = [...doctemp, doc];
       });
     }
-    console.log(docsObj);
     return (
       <Card className={classes.card}>
         <CardContent>

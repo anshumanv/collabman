@@ -10,3 +10,13 @@ export const fetchUserProjects = username => {
     },
   });
 };
+
+// Create new project
+export const createProject = (username, payload) => {
+  return axios.post(`${API_URL}/api/v1/${username}/project/`, payload, {
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec',
+    },
+  });
+};
