@@ -6,10 +6,12 @@ import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import Button from '@material-ui/core/Button';
 import deepOrange from '@material-ui/core/colors/deepOrange';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import AddIcon from '@material-ui/icons/Add';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Collapse from '@material-ui/core/Collapse';
@@ -22,7 +24,7 @@ import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
 
 // Actions
-import { fetchTasks } from '../actions/taskActions';
+import { fetchTasks, addTask } from '../actions/taskActions';
 
 const styles = theme => ({
   root: {
@@ -61,9 +63,20 @@ class TasksCard extends Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography className={classes.title} color="textSecondary">
-            Tasks
-          </Typography>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography className={classes.title} color="textSecondary">
+              Tasks
+            </Typography>
+            <Button
+              variant="fab"
+              mini
+              color="primary"
+              aria-label="Add"
+              className={classes.button}
+            >
+              <AddIcon />
+            </Button>
+          </div>
           <div className={classes.root}>
             <List component="nav">
               {tasksList.map(task => (
