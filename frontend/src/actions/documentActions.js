@@ -1,10 +1,16 @@
 import { documentActions } from '../constants';
 
-import { fetchProjectDocuments } from '../API/documents';
+import {
+  fetchProjectDocuments,
+  deleteDocument,
+  postDocument,
+} from '../API/documents';
 
-export const fetchDocuments = (username, project) => {
+export const fetchDocuments = () => {
   return (dispatch, getState) => {
-    return fetchProjectDocuments(username, project)
+    const username = 'test'; // gommenasai
+    const projectSlug = getState().projects.currentProject.slug;
+    return fetchProjectDocuments(username, projectSlug)
       .then(response => {
         console.log(response.data);
         dispatch(docsFetched(response.data));
@@ -31,7 +37,11 @@ const docsFailed = () => {
 export const postNewDoc = payload => {
   return (dispatch, getState) => {
     dispatch(postingNewDoc());
-    return postDoc('test', getState().projects.currentProject.slug, payload) // gommenasai
+    return postDocument(
+      'test',
+      getState().projects.currentProject.slug,
+      payload,
+    ) // gommenasai
       .then(response => {
         dispatch(docPostSuccess(response.data));
         dispatch(
@@ -69,7 +79,7 @@ export const deleteSelectedDoc = docId => {
   return (dispatch, getState) => {
     const username = 'test'; // gommenasai
     const projectSlug = getState().projects.currentProject.slug;
-    return deleteDoc(username, projectSlug, docId)
+    return deleteDocument(username, projectSlug, docId)
       .then(response => {
         dispatch(docDeletionSucceeded());
         dispatch(fetchDocuments(username, projectSlug)); // gommenasai

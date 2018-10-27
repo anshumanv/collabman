@@ -15,7 +15,7 @@ export const fetchProjectDocuments = (username, projectSlug) => {
 };
 
 // Create new doc
-export const postDoc = (username, projectSlug, payload) => {
+export const postDocument = (username, projectSlug, payload) => {
   return axios.post(
     `${API_URL}/api/v1/${username}/project/${projectSlug}/document/`,
     payload,
@@ -29,7 +29,7 @@ export const postDoc = (username, projectSlug, payload) => {
 };
 
 // Delete selected doc
-export const deleteDoc = (username, projectSlug, docId) => {
+export const deleteDocument = (username, projectSlug, docId) => {
   return axios.delete(
     `${API_URL}/api/v1/${username}/project/${projectSlug}/document/${docId}/`,
     {

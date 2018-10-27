@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+// MUI :(
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
@@ -23,6 +24,13 @@ import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
 import MeetingScheduler from './MeetingScheduler';
+
+// Some actions
+import {
+  postNewDoc,
+  deleteSelectedDoc,
+  fetchDocuments,
+} from '../actions/documentActions';
 
 function TabContainer(props) {
   return (
@@ -78,14 +86,6 @@ class DocumentCard extends React.Component {
 
   handleChange = (event, value) => {
     this.setState({ value });
-  };
-
-  generate = element => {
-    return [0, 1, 2].map(value =>
-      React.cloneElement(element, {
-        key: value,
-      }),
-    );
   };
 
   render() {
@@ -147,7 +147,12 @@ class DocumentCard extends React.Component {
                         secondary={somedoc.document_id}
                       />
                       <ListItemSecondaryAction>
-                        <IconButton aria-label="Delete">
+                        <IconButton
+                          aria-label="Delete"
+                          onClick={() =>
+                            this.props.deleteDocument(somedoc.document_id)
+                          }
+                        >
                           <DeleteIcon />
                         </IconButton>
                       </ListItemSecondaryAction>
@@ -168,6 +173,9 @@ class DocumentCard extends React.Component {
 DocumentCard.propTypes = {
   classes: PropTypes.object.isRequired,
   docs: PropTypes.array,
+  deleteDocument: PropTypes.func,
+  postDocument: PropTypes.func,
+  fetchProjectDocs: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -177,7 +185,17 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-  return {};
+  return {
+    fetchProjectDocs: () => {
+      return dispatch(fetchDocuments());
+    },
+    postDocument: payload => {
+      return dispatch(postNewDoc(payload));
+    },
+    deleteDocument: docId => {
+      return dispatch(deleteSelectedDoc(docId));
+    },
+  };
 };
 
 export default connect(
