@@ -33,7 +33,11 @@ import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
 
 // Actions
-import { fetchTasks, postNewTask } from '../actions/taskActions';
+import {
+  fetchTasks,
+  postNewTask,
+  deleteSelectedTask,
+} from '../actions/taskActions';
 
 const styles = theme => ({
   root: {
@@ -122,7 +126,10 @@ class TasksCard extends Component {
                   </ListItemIcon>
                   <ListItemText inset primary={task.task_description} />
                   <ListItemSecondaryAction>
-                    <IconButton aria-label="Delete">
+                    <IconButton
+                      aria-label="Delete"
+                      onClick={() => this.props.deleteTask(task.task_id)}
+                    >
                       <DeleteIcon />
                     </IconButton>
                   </ListItemSecondaryAction>
@@ -176,6 +183,7 @@ TasksCard.propTypes = {
   fetchProjectTasks: PropTypes.func,
   tasks: PropTypes.object,
   submitTask: PropTypes.func,
+  deleteTask: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -191,6 +199,9 @@ const mapDispatchToProps = dispatch => {
     },
     submitTask: payload => {
       return dispatch(postNewTask(payload));
+    },
+    deleteTask: taskId => {
+      return dispatch(deleteSelectedTask(taskId));
     },
   };
 };

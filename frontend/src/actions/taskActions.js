@@ -1,6 +1,6 @@
 import { taskActions } from '../constants';
 
-import { fetchProjectTasks, postTask } from '../API/tasks';
+import { fetchProjectTasks, postTask, deleteTask } from '../API/tasks';
 
 export const fetchTasks = (username, project) => {
   return (dispatch, getState) => {
@@ -60,5 +60,33 @@ export const postingNewTask = () => {
 export const taskPostFailed = newTask => {
   return {
     type: taskActions.TASK_POST_FAILED,
+  };
+};
+
+export const deleteSelectedTask = taskId => {
+  return (dispatch, getState) => {
+    const username = 'test'; // gommenasai
+    const projectSlug = getState().projects.currentProject.slug;
+    return deleteTask(username, projectSlug, taskId)
+      .then(response => {
+        dispatch(taskDeletionSucceeded());
+        dispatch(fetchTasks('test', getState().projects.currentProject.slug)); // gommenasai
+      })
+      .catch(err => {
+        console.log(err);
+        dispatch(taskDeletionFailed());
+      });
+  };
+};
+
+const taskDeletionSucceeded = () => {
+  return {
+    type: taskActions.TASK_DELETE_SUCCESS,
+  };
+};
+
+const taskDeletionFailed = () => {
+  return {
+    type: taskActions.TASK_DELETE_FAILED,
   };
 };
