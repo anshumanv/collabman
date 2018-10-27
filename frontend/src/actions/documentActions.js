@@ -49,7 +49,7 @@ export const postNewDoc = payload => {
         ); // gommenasai
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response.request.responseText);
         dispatch(docPostFailed(err.response.request.responseText));
       });
   };

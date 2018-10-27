@@ -160,6 +160,7 @@ class DocTypeView(APIView):
         doctype = get_object_or_404(DocType, id=did)
         doctype.delete()
         return Response(status=204)
+
 class DocumentListView(APIView):
     permission_classes = (IsAuthenticated,)
 
@@ -180,6 +181,8 @@ class DocumentListView(APIView):
         user = get_object_or_404(User, username=username)
         project = get_object_or_404(Project, slug=project_slug)
         request.data['project_id'] = project.id
+        request.data['document_id'] = Document.objects.filter(project_id=project.id).order_by('-document_id')[0].document_id + 1
+        print(request.data['document_id'])
         try:
             user = project.users.get(user=user)
             serialize = DocumentSerializer(data=request.data)

@@ -67,6 +67,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'collabman.urls'
 
 CORS_ORIGIN_ALLOW_ALL=True
+CORS_ALLOW_METHODS = (
+        'GET',
+        'POST',
+        'PUT',
+        'PATCH',
+        'DELETE',
+        'OPTIONS'
+)
 
 TEMPLATES = [
     {

@@ -19,11 +19,18 @@ import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import FolderIcon from '@material-ui/icons/Folder';
+import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Button from '@material-ui/core/Button';
 import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
 import MeetingScheduler from './MeetingScheduler';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import TextField from '@material-ui/core/TextField';
+import DialogContentText from '@material-ui/core/DialogContentText';
 
 // Some actions
 import {
@@ -68,24 +75,54 @@ const styles = theme => ({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  heading: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
 });
 
 class DocumentCard extends React.Component {
   state = {
     value: 0,
-    modalOpen: false,
+    meetingModal: false,
+    docTitle: '',
+    docLink: '',
   };
 
   handleOpen = () => {
-    this.setState({ modalOpen: true });
+    this.setState({ meetingModal: true });
   };
 
   handleClose = () => {
-    this.setState({ modalOpen: false });
+    this.setState({ meetingModal: false });
   };
 
   handleChange = (event, value) => {
     this.setState({ value });
+  };
+
+  openNewDocDialog = () => {
+    this.setState({ newDocDialog: true });
+  };
+
+  closeNewDocDialog = () => {
+    this.setState({ newDocDialog: false });
+  };
+
+  handleFormUpdates = (event, input) => {
+    if (event.target.id === 'task-title')
+      this.setState({ [input]: event.target.value });
+    else if (event.target.id === 'task-content')
+      this.setState({ [input]: event.target.value });
+  };
+
+  postNewDocument = template_link => {
+    const payload = {
+      document_title: this.state.docTitle,
+      document_link: this.state.docLink,
+      template_link: template_link + 1,
+    };
+    this.props.postDocument(payload);
   };
 
   render() {
@@ -101,21 +138,75 @@ class DocumentCard extends React.Component {
     return (
       <Card className={classes.card}>
         <CardContent>
-          <Typography className={classes.title} color="textSecondary">
-            Project Documents
-          </Typography>
-          <CardActions>
-            <Button onClick={() => this.handleOpen()}>
-              Schedule A Meeting
-            </Button>
-            <Modal open={this.state.modalOpen} onClose={this.handleClose}>
-              <div className={classes.container}>
-                <div>
-                  <MeetingScheduler />
+          <div className={classes.heading}>
+            <Typography className={classes.title} color="textSecondary">
+              Project Documents
+            </Typography>
+            <CardActions>
+              <Button onClick={() => this.handleOpen()}>
+                Schedule A Meeting
+              </Button>
+              <Modal open={this.state.meetingModal} onClose={this.handleClose}>
+                <div className={classes.container}>
+                  <div>
+                    <MeetingScheduler />
+                  </div>
                 </div>
-              </div>
-            </Modal>
-          </CardActions>
+              </Modal>
+            </CardActions>
+            <Button
+              variant="fab"
+              mini
+              color="primary"
+              aria-label="Add"
+              className={classes.button}
+              onClick={this.openNewDocDialog}
+            >
+              <AddIcon />
+            </Button>
+            <Dialog
+              open={this.state.newDocDialog}
+              onClose={this.closeNewDocDialog}
+              aria-labelledby="form-dialog-title"
+            >
+              <DialogTitle id="form-dialog-title">
+                New Document in {value}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Please enter the document details
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="task-title"
+                  onChange={e => this.handleFormUpdates(e, 'docTitle')}
+                  label="Document Title"
+                  type="text"
+                  fullWidth
+                />
+                <TextField
+                  margin="dense"
+                  id="task-content"
+                  onChange={e => this.handleFormUpdates(e, 'docLink')}
+                  label="Document Link"
+                  type="text"
+                  fullWidth
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.closeNewDocDialog} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => this.postNewDocument(value)}
+                  color="primary"
+                >
+                  Submit
+                </Button>
+              </DialogActions>
+            </Dialog>
+          </div>
           <div className={classes.root}>
             <AppBar position="static" color="default">
               <Tabs
