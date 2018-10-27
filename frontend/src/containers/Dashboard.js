@@ -98,7 +98,9 @@ class Dashboard extends Component {
               color="inherit"
               noWrap
             >
-              collabman
+              {this.props.currentProject
+                ? this.props.currentProject.project_name
+                : ''}
             </Typography>
             {auth && (
               <div>
@@ -155,10 +157,13 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
+  currentProject: PropTypes.object,
 };
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    currentProject: state.projects.currentProject,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
