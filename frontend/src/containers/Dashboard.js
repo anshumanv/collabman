@@ -9,6 +9,7 @@ import Tasks from '../components/Tasks';
 import NewProject from './NewProject';
 import DocumentsCard from '../components/Documents';
 import Sidebar from '../components/Sidebar.js';
+import ChatWindow from '../components/Chat.js'
 
 // MUI :(
 import { withStyles } from '@material-ui/core/styles';
@@ -145,6 +146,8 @@ class Dashboard extends Component {
           <Tasks />
 
           <DocumentsCard />
+
+          <ChatWindow/>
         </main>
       </div>
     );
