@@ -57,7 +57,7 @@ export const postingNewTask = () => {
   };
 };
 
-export const taskPostFailed = newTask => {
+export const taskPostFailed = () => {
   return {
     type: taskActions.TASK_POST_FAILED,
   };
@@ -70,7 +70,7 @@ export const deleteSelectedTask = taskId => {
     return deleteTask(username, projectSlug, taskId)
       .then(response => {
         dispatch(taskDeletionSucceeded());
-        dispatch(fetchTasks('test', getState().projects.currentProject.slug)); // gommenasai
+        dispatch(fetchTasks(username, projectSlug)); // gommenasai
       })
       .catch(err => {
         console.log(err);

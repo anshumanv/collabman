@@ -14,7 +14,7 @@ export const fetchProjectTasks = (username, projectSlug) => {
   );
 };
 
-// Get user tasks
+// Create new task
 export const postTask = (username, projectSlug, payload) => {
   return axios.post(
     `${API_URL}/api/v1/${username}/project/${projectSlug}/task/`,

@@ -13,3 +13,30 @@ export const fetchProjectDocuments = (username, projectSlug) => {
     },
   );
 };
+
+// Create new doc
+export const postDoc = (username, projectSlug, payload) => {
+  return axios.post(
+    `${API_URL}/api/v1/${username}/project/${projectSlug}/document/`,
+    payload,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec', // gommenasai
+      },
+    },
+  );
+};
+
+// Delete selected doc
+export const deleteDoc = (username, projectSlug, docId) => {
+  return axios.delete(
+    `${API_URL}/api/v1/${username}/project/${projectSlug}/document/${docId}/`,
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec', // gommenasai
+      },
+    },
+  );
+};
