@@ -17,7 +17,11 @@ export const taskReducer = (state = initialState, action) => {
     case taskActions.TASK_POST_SUCCESS:
       return { ...state, postingNewTask: false, newTask: action.newTask };
     case taskActions.TASK_POST_FAILED:
-      return { ...state, postingNewTask: false };
+      return state;
+    case taskActions.TASK_DELETE_SUCCESS:
+      return state;
+    case taskActions.TASK_DELETE_FAILED:
+      return state;
     default:
       return state;
   }
