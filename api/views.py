@@ -181,7 +181,12 @@ class DocumentListView(APIView):
         user = get_object_or_404(User, username=username)
         project = get_object_or_404(Project, slug=project_slug)
         request.data['project_id'] = project.id
-        request.data['document_id'] = Document.objects.filter(project_id=project.id).order_by('-document_id')[0].document_id + 1
+        documents =  Document.objects.filter(project_id=project.id).order_by('-document_id')
+        if len(documents) > 0:
+            request.data['document_id'] = documents[0].document_id + 1
+        else:
+            request.data['document_id'] = 0
+            
         print(request.data['document_id'])
         try:
             user = project.users.get(user=user)

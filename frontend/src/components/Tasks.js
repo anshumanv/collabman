@@ -89,6 +89,7 @@ class TasksCard extends Component {
     };
     console.log(newTaskPayload);
     this.props.submitTask(newTaskPayload);
+    this.handleClose();
   };
 
   render() {
@@ -194,8 +195,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    fetchProjectTasks: project => {
-      return dispatch(fetchTasks(project));
+    fetchProjectTasks: () => {
+      return dispatch(fetchTasks());
     },
     submitTask: payload => {
       return dispatch(postNewTask(payload));

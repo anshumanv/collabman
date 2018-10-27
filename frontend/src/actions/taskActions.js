@@ -2,9 +2,11 @@ import { taskActions } from '../constants';
 
 import { fetchProjectTasks, postTask, deleteTask } from '../API/tasks';
 
-export const fetchTasks = (username, project) => {
+export const fetchTasks = () => {
   return (dispatch, getState) => {
-    return fetchProjectTasks(username, project)
+    const username = 'test'; // gommenasai
+    const projectSlug = getState().projects.currentProject.slug;
+    return fetchProjectTasks(username, projectSlug)
       .then(response => {
         dispatch(tasksFetched(response.data));
       })
