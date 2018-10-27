@@ -274,6 +274,11 @@ class TaskListView(APIView):
             if user.id != project.project_manager_id:
                 raise  PermissionDenied
             request.data['project_id'] = project.id
+            tasks = Task.objects.filter(project_id=project.id).order_by('-task_id')
+            if len(tasks) > 0:
+                request.data['task_id'] = tasks[0].task_id + 1
+            else:
+                request.data['task_id'] = 0
             serialize = TaskSerializer(data=request.data)
             if serialize.is_valid():
                 serialize.save()

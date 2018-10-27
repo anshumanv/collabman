@@ -76,16 +76,9 @@ class TasksCard extends Component {
   };
 
   submitNewTask = () => {
-    let newTaskId = 0;
-
-    // calculate new task id in the frontend, shift it to the backend
-    this.props.tasks.tasks.forEach(task => {
-      newTaskId = Math.max(newTaskId, task.id);
-    });
     const newTaskPayload = {
       task_title: this.state.taskTitle,
       task_description: this.state.taskDescription,
-      task_id: newTaskId + 1,
     };
     console.log(newTaskPayload);
     this.props.submitTask(newTaskPayload);
