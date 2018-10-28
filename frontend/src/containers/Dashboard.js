@@ -9,7 +9,7 @@ import Tasks from '../components/Tasks';
 import NewProject from './NewProject';
 import DocumentsCard from '../components/Documents';
 import Sidebar from '../components/Sidebar.js';
-import ChatWindow from '../components/Chat.js'
+import ChatWindow from '../components/Chat.js';
 
 // MUI :(
 import { withStyles } from '@material-ui/core/styles';
@@ -99,7 +99,9 @@ class Dashboard extends Component {
               color="inherit"
               noWrap
             >
-              collabman
+              {this.props.currentProject
+                ? this.props.currentProject.project_name
+                : ''}
             </Typography>
             {auth && (
               <div>
@@ -147,7 +149,7 @@ class Dashboard extends Component {
 
           <DocumentsCard />
 
-          <ChatWindow/>
+          <ChatWindow />
         </main>
       </div>
     );
@@ -158,10 +160,13 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
+  currentProject: PropTypes.object,
 };
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    currentProject: state.projects.currentProject,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
