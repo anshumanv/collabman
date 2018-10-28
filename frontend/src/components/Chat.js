@@ -76,7 +76,7 @@ export default class Redirect extends React.Component {
       });
     if (!this.state.isTokenRecieved)
       return (
-        <a href="https://slack.com/oauth/authorize?scope=channels:read&client_id=414787387841.464240578163">
+        <a href="https://slack.com/oauth/authorize?scope=channels:read,chat:write:user&client_id=414787387841.464240578163">
           <img src="https://api.slack.com/img/sign_in_with_slack.png" />
         </a>
       );
