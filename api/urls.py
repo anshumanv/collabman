@@ -15,7 +15,6 @@ from .views import (
 from . import views
 
 urlpatterns = [
-	# url(r'^auth/', include('rest_auth.urls')),)
     url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     url(r'^auth/register/', include('rest_auth.registration.urls')),
     path('api-auth/', include('rest_framework.urls')),
