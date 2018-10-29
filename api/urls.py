@@ -16,7 +16,6 @@ from . import views
 
 urlpatterns = [
     url(r'^auth/', include('rest_framework_social_oauth2.urls')),
-    url(r'^auth/register/', include('rest_auth.registration.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path("user/<str:username>/", ProfileAPIView.as_view(), name="user_details"),
     path("user/", ProfileList.as_view(), name="profile_list"),
