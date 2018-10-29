@@ -1,13 +1,21 @@
 from django.urls import include, path
 from django.conf.urls import url
-from .views import ProfileAPIView, UserCreate, LoginView, ProfileList, ProfileCreate, ProjectList, ProjectView, DocTypeListView, DocTypeView, DocumentListView, DocumentView, TaskListView, TaskView, SubtaskListView, SubtaskView, SubtaskLogListView, SubtaskLogView
-
+from .views import (
+    ProfileAPIView, 
+    UserCreate, LoginView, 
+    ProfileList, ProfileCreate, 
+    ProjectList, ProjectView, 
+    DocTypeListView, DocTypeView, 
+    DocumentListView, DocumentView, 
+    TaskListView, TaskView, 
+    SubtaskListView, SubtaskView, 
+    SubtaskLogListView, SubtaskLogView
+)
 
 from . import views
 
 urlpatterns = [
-	url(r'^auth/', include('rest_auth.urls')),
-    url(r'^auth/register/', include('rest_auth.registration.urls')),
+    url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     path('api-auth/', include('rest_framework.urls')),
     path("user/<str:username>/", ProfileAPIView.as_view(), name="user_details"),
     path("user/", ProfileList.as_view(), name="profile_list"),
