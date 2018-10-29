@@ -1,7 +1,16 @@
 from django.urls import include, path
 from django.conf.urls import url
-from .views import ProfileAPIView, UserCreate, LoginView, ProfileList, ProfileCreate, ProjectList, ProjectView, DocTypeListView, DocTypeView, DocumentListView, DocumentView, TaskListView, TaskView, SubtaskListView, SubtaskView, SubtaskLogListView, SubtaskLogView
-
+from .views import (
+    ProfileAPIView, 
+    UserCreate, LoginView, 
+    ProfileList, ProfileCreate, 
+    ProjectList, ProjectView, 
+    DocTypeListView, DocTypeView, 
+    DocumentListView, DocumentView, 
+    TaskListView, TaskView, 
+    SubtaskListView, SubtaskView, 
+    SubtaskLogListView, SubtaskLogView
+)
 
 from . import views
 

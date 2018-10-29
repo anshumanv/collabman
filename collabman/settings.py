@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'rest_auth.registration',
-
+    'allauth.socialaccount',
     'oauth2_provider',
     'social_django',
     'rest_framework_social_oauth2',
@@ -196,4 +196,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-django_heroku.settings(locals())
+# django_heroku.settings(locals())
