@@ -87,6 +87,7 @@ class DocumentCard extends React.Component {
     meetingModal: false,
     docTitle: '',
     docLink: '',
+    newDocDialog: false,
   };
 
   handleOpen = () => {
@@ -264,7 +265,7 @@ class DocumentCard extends React.Component {
 
 DocumentCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  docs: PropTypes.array,
+  docs: PropTypes.object,
   deleteDocument: PropTypes.func,
   postDocument: PropTypes.func,
   fetchProjectDocs: PropTypes.func,
