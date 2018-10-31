@@ -27,6 +27,7 @@ import Divider from '@material-ui/core/Divider';
 // Actions
 import { getUserProjects } from '../actions/projectActions';
 import { fetchContributors } from '../actions/statsActions';
+import { authSuccess } from '../actions/authActions';
 
 const drawerWidth = 240;
 
@@ -67,8 +68,11 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    this.props.getUserProjects('test');
-    this.props.fetchContributors('ongaku-desktop');
+    if (localStorage.getItem('access_token')) {
+      this.props.saveAuth(localStorage.getItem('access_token'));
+    }
+    this.props.getUserProjects();
+    this.props.fetchContributors();
   }
 
   handleChange = event => {
@@ -161,6 +165,7 @@ Dashboard.propTypes = {
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
   currentProject: PropTypes.object,
+  saveAuth: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -176,6 +181,9 @@ const mapDispatchToProps = dispatch => {
     },
     fetchContributors: project => {
       return dispatch(fetchContributors(project));
+    },
+    saveAuth: token => {
+      dispatch(authSuccess(token));
     },
   };
 };

@@ -18,8 +18,9 @@ class AuthComplete extends React.Component {
       .get('http://127.0.0.1:8000/api/v1/github_token/')
       .then(res => {
         console.log(res.data);
-        this.props.saveAuth(res.data.token[0]);
-        window.location.pathname = '/dashboard';
+        localStorage.setItem('access_token', res.data.token[0]);
+        this.props.saveAuth(res.data.token[0], res.data.username);
+        this.props.history.push('/dashboard');
       })
       .catch(err => {
         console.log(err);
@@ -27,12 +28,13 @@ class AuthComplete extends React.Component {
   }
 
   render() {
-    return <div>ahahah</div>;
+    return <div>Redirecting</div>;
   }
 }
 
 AuthComplete.propTypes = {
   saveAuth: PropTypes.func,
+  history: PropTypes.array,
 };
 
 const mapStateToProps = state => {
@@ -41,8 +43,8 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    saveAuth: token => {
-      dispatch(authSuccess(token));
+    saveAuth: (token, username) => {
+      dispatch(authSuccess(token, username));
     },
   };
 };

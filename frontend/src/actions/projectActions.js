@@ -7,7 +7,8 @@ import { fetchUserProjects, createProject } from '../API/projects';
 export const getUserProjects = username => {
   return (dispatch, getState) => {
     dispatch(projectsLoading());
-    return fetchUserProjects(username)
+    const token = getState().auth.token;
+    return fetchUserProjects(username, token)
       .then(response => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
@@ -15,6 +16,7 @@ export const getUserProjects = username => {
         }
       })
       .catch(err => {
+        console.log(err.response.request);
         dispatch(projectsFailed());
       });
   };
@@ -54,7 +56,8 @@ export const createNewProject = payload => {
   return (dispatch, getState) => {
     dispatch(creatingNewProject());
     console.log(payload);
-    return createProject('test', payload)
+    const token = getState().auth.token;
+    return createProject('anshumanv', payload, token)
       .then(response => {
         dispatch(projectsCreationSucceed(response.data));
         console.log(response);

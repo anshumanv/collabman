@@ -31,7 +31,8 @@ class ProfileAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
-        user_profile = get_object_or_404(Profile, id=user.id)
+        # print(user.id)
+        user_profile = get_object_or_404(Profile, user=user.id)
         data = ProfileSerializer(user_profile).data
         return Response(data)
     
@@ -72,7 +73,7 @@ class LoginGithubView(APIView):
         if request.user.is_authenticated:
             print(Token.objects.filter(user=request.user))
             data = serializers.serialize('python', Token.objects.filter(user=request.user))
-            return Response({"token": [d['pk'] for d in data] })
+            return Response({"token": [d['pk'] for d in data], "username": request.user.username })
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -89,8 +90,8 @@ class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
-        user = get_object_or_404(Profile, id=user.id)
-        projects = get_list_or_404(user.users)
+        user = get_object_or_404(Profile, user=user.id)
+        projects = get_list_or_404(Projects, project_manager=user)
         serializer = ProjectSerializer(projects, many =True)
         return Response(serializer.data)
     
