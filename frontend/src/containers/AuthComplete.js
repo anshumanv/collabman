@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import Login from '../components/Login';
-import Signup from '../components/Signup';
-import Typography from '@material-ui/core/Typography';
+import { authSuccess } from '../actions/authActions';
+import { connect } from 'react-redux';
 
 import axios from 'axios';
 
@@ -24,6 +18,8 @@ class AuthComplete extends React.Component {
       .get('http://127.0.0.1:8000/api/v1/github_token/')
       .then(res => {
         console.log(res.data);
+        this.props.saveAuth(res.data.token[0]);
+        window.location.pathname = '/dashboard';
       })
       .catch(err => {
         console.log(err);
@@ -36,7 +32,22 @@ class AuthComplete extends React.Component {
 }
 
 AuthComplete.propTypes = {
-  classes: PropTypes.object.isRequired,
+  saveAuth: PropTypes.func,
 };
 
-export default withStyles(styles)(AuthComplete);
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    saveAuth: token => {
+      dispatch(authSuccess(token));
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AuthComplete);
