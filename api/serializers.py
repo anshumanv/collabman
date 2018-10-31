@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
 from django.contrib.auth.models import User
-from rest_framework.authtoken.models import Token
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

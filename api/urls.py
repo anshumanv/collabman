@@ -9,7 +9,8 @@ from .views import (
     DocumentListView, DocumentView, 
     TaskListView, TaskView, 
     SubtaskListView, SubtaskView, 
-    SubtaskLogListView, SubtaskLogView
+    SubtaskLogListView, SubtaskLogView,
+    LoginGithubView
 )
 
 from . import views
@@ -17,6 +18,7 @@ from . import views
 urlpatterns = [
     url(r'^auth/', include('rest_framework_social_oauth2.urls')),
     path('api-auth/', include('rest_framework.urls')),
+    url('github/',LoginGithubView.as_view()),
     path("user/<str:username>/", ProfileAPIView.as_view(), name="user_details"),
     path("user/", ProfileList.as_view(), name="profile_list"),
     path("user/signup/", UserCreate.as_view(), name="user_create"),
