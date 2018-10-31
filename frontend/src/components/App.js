@@ -53,7 +53,11 @@ class App extends Component {
     return (
       <div className={classes.root}>
         <div className={classes.buttonContainer}>
-          <Button variant="contained" className={classes.button}>
+          <Button
+            href="http://127.0.0.1:8000/api/v1/auth/login/github/"
+            variant="contained"
+            className={classes.button}
+          >
             Login
           </Button>
           <Button variant="contained" className={classes.button}>

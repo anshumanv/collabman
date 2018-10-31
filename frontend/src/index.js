@@ -12,6 +12,7 @@ import NewProject from './containers/NewProject';
 import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
 import Auth from './containers/Auth';
+import AuthComplete from './containers/AuthComplete';
 
 import './styles/index.css';
 import registerServiceWorker from './registerServiceWorker';
@@ -30,7 +31,7 @@ ReactDOM.render(
           <Route exact path="/new" component={NewProject} />
           <Route exact path="/dashboard" component={Dashboard} />
           <Route exact path="/profile/:username" component={Profile} />
-          <Route exact path="/auth" component={Auth} />
+          <Route exact path="/auth/complete" component={AuthComplete} />
           <Route exact path="*" component={NotFound} />
         </Switch>
       </div>

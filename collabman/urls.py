@@ -21,5 +21,5 @@ from django.views.generic import TemplateView
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls')),
-    #url(r'^', TemplateView.as_view(template_name="index.html")),
+    url(r'^', TemplateView.as_view(template_name="index.html")),
 ]
