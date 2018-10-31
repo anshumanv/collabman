@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import swal from 'sweetalert';
 
 // MUI :(
 import { withStyles } from '@material-ui/core/styles';
@@ -127,6 +128,23 @@ class DocumentCard extends React.Component {
     this.closeNewDocDialog();
   };
 
+  deleteDocConfirmation = docId => {
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then(willDelete => {
+      if (willDelete) {
+        this.props.deleteDocument(docId);
+        swal('Poof! Document has been deleted!', {
+          icon: 'success',
+        });
+      }
+    });
+  };
+
   render() {
     const { classes, docs } = this.props;
     const { value } = this.state;
@@ -243,7 +261,7 @@ class DocumentCard extends React.Component {
                         <IconButton
                           aria-label="Delete"
                           onClick={() =>
-                            this.props.deleteDocument(somedoc.document_id)
+                            this.deleteDocConfirmation(somedoc.document_id)
                           }
                         >
                           <DeleteIcon />
