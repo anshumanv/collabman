@@ -123,6 +123,7 @@ class DocumentCard extends React.Component {
       template_link: template_link + 1,
     };
     this.props.postDocument(payload);
+    this.closeNewDocDialog();
   };
 
   render() {

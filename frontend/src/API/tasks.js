@@ -8,7 +8,7 @@ export const fetchProjectTasks = (username, projectSlug) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec', // gommenasai
+        Authorization: 'TOKEN 35357beeb260c710c15bbaa9b0deedbe859555f0', // gommenasai
       },
     },
   );
@@ -22,7 +22,7 @@ export const postTask = (username, projectSlug, payload) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec', // gommenasai
+        Authorization: 'TOKEN 35357beeb260c710c15bbaa9b0deedbe859555f0', // gommenasai
       },
     },
   );
@@ -35,7 +35,7 @@ export const deleteTask = (username, projectSlug, taskId) => {
     {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec', // gommenasai
+        Authorization: 'TOKEN 35357beeb260c710c15bbaa9b0deedbe859555f0', // gommenasai
       },
     },
   );

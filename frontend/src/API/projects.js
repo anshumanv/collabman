@@ -6,7 +6,7 @@ export const fetchUserProjects = username => {
   return axios.get(`${API_URL}/api/v1/${username}/project/`, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec',
+      Authorization: 'TOKEN 35357beeb260c710c15bbaa9b0deedbe859555f0',
     },
   });
 };
@@ -16,7 +16,7 @@ export const createProject = (username, payload) => {
   return axios.post(`${API_URL}/api/v1/${username}/project/`, payload, {
     headers: {
       'Content-Type': 'application/json',
-      Authorization: 'TOKEN 0702d860af5173686417121fe4300671ef9969ec',
+      Authorization: 'TOKEN 35357beeb260c710c15bbaa9b0deedbe859555f0',
     },
   });
 };
