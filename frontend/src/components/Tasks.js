@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import swal from 'sweetalert';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -85,6 +86,23 @@ class TasksCard extends Component {
     this.handleClose();
   };
 
+  deleteTaskConfirmation = taskId => {
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then(willDelete => {
+      if (willDelete) {
+        this.props.deleteTask(taskId);
+        swal('Poof! Task has been deleted!', {
+          icon: 'success',
+        });
+      }
+    });
+  };
+
   render() {
     const { classes, tasks } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
@@ -122,7 +140,7 @@ class TasksCard extends Component {
                   <ListItemSecondaryAction>
                     <IconButton
                       aria-label="Delete"
-                      onClick={() => this.props.deleteTask(task.task_id)}
+                      onClick={() => this.deleteTaskConfirmation(task.task_id)}
                     >
                       <DeleteIcon />
                     </IconButton>
