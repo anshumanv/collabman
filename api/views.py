@@ -10,6 +10,10 @@ from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
+from rest_framework.authtoken.models import Token
+from django.core import serializers
+
+
 # Create your views here.
 
 class UserCreate(generics.CreateAPIView):
@@ -58,6 +62,23 @@ class LoginView(APIView):
             return Response({"token": user.auth_token.key })
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+class LoginGithubView(APIView):
+    permission_classes = ()
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            print(Token.objects.filter(user=request.user))
+            data = serializers.serialize('python', Token.objects.filter(user=request.user))
+            return Response({"token": [d['pk'] for d in data] })
+        else:
+            return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+
 
 class ProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()
