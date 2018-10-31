@@ -69,7 +69,10 @@ class Dashboard extends Component {
 
   componentDidMount() {
     if (localStorage.getItem('access_token')) {
-      this.props.saveAuth(localStorage.getItem('access_token'));
+      this.props.saveAuth(
+        localStorage.getItem('access_token'),
+        localStorage.getItem('username'),
+      );
     }
     this.props.getUserProjects();
     this.props.fetchContributors();
@@ -182,8 +185,8 @@ const mapDispatchToProps = dispatch => {
     fetchContributors: project => {
       return dispatch(fetchContributors(project));
     },
-    saveAuth: token => {
-      dispatch(authSuccess(token));
+    saveAuth: (token, username) => {
+      dispatch(authSuccess(token, username));
     },
   };
 };

@@ -19,6 +19,7 @@ class AuthComplete extends React.Component {
       .then(res => {
         console.log(res.data);
         localStorage.setItem('access_token', res.data.token[0]);
+        localStorage.setItem('username', res.data.username);
         this.props.saveAuth(res.data.token[0], res.data.username);
         this.props.history.push('/dashboard');
       })

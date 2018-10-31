@@ -8,6 +8,7 @@ export const getUserProjects = username => {
   return (dispatch, getState) => {
     dispatch(projectsLoading());
     const token = getState().auth.token;
+    const username = getState().auth.username;
     return fetchUserProjects(username, token)
       .then(response => {
         dispatch(projectsFetched(response.data));

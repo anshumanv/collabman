@@ -9,6 +9,7 @@ const initialState = {
 export const authReducer = (state = initialState, action) => {
   switch (action.type) {
     case authActions.AUTH_SUCCESS:
+      console.log(action);
       return {
         ...state,
         loggedIn: true,

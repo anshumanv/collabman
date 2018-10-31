@@ -90,14 +90,16 @@ class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
-        user = get_object_or_404(Profile, user=user.id)
-        projects = get_list_or_404(Projects, project_manager=user)
+        user = user.profile
+        # print(user) 
+        projects = Project.objects.filter(users=user) # @aashutoshrathi best
+        # print(projects)
         serializer = ProjectSerializer(projects, many =True)
         return Response(serializer.data)
     
     def post(self, request, username):
         user = get_object_or_404(User, username=username)
-        uid = user.id
+        uid = user.profile.id
         request.data['project_manager'] = uid
         if uid not in request.data['users']:
             request.data['users'].append(uid)
