@@ -4,6 +4,7 @@ import { fetchProjectTasks, postTask, deleteTask } from '../API/tasks';
 
 export const fetchTasks = () => {
   return (dispatch, getState) => {
+    dispatch(fetchingTasks());
     const username = getState().auth.username;
     const token = getState().auth.token;
     const projectSlug = getState().projects.currentProject.slug;
@@ -22,6 +23,12 @@ const tasksFetched = tasks => {
   return {
     type: taskActions.FETCH_TASKS_SUCCESS,
     tasks,
+  };
+};
+
+const fetchingTasks = () => {
+  return {
+    type: taskActions.FETCH_TASKS_LOADING,
   };
 };
 

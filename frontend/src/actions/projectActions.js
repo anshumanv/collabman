@@ -15,11 +15,10 @@ export const getUserProjects = username => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
           dispatch(setCurrentProject(response.data[0]));
-          dispatch(fetchContributors(response.data[0].project_link));
         }
       })
       .catch(err => {
-        console.log(err.response.request);
+        console.log(err);
         dispatch(projectsFailed());
       });
   };
