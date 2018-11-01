@@ -75,7 +75,15 @@ class Contributions extends Component {
           {this.props.contributorsFetched ? (
             this.props.contributors.length ? (
               <div>
-                <div>Contributors to the project</div>
+                <div>
+                  Code contribution overview -{' '}
+                  <a
+                    target="_blank"
+                    href={this.props.currentProject.project_link}
+                  >
+                    {this.props.currentProject.project_link}
+                  </a>
+                </div>
                 <PieChart width={800} height={400}>
                   <Pie
                     activeIndex={activePieIndex}
@@ -200,12 +208,14 @@ Contributions.propTypes = {
   classes: PropTypes.object.isRequired,
   contributors: PropTypes.array,
   contributorsFetched: PropTypes.bool,
+  currentProject: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     contributors: state.stats.contributors,
     contributorsFetched: state.stats.contributorsFetched,
+    currentProject: state.projects.currentProject,
   };
 };
 

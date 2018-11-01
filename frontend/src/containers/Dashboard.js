@@ -146,7 +146,6 @@ class Dashboard extends Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Typography noWrap>{'Welcome to collabman!'}</Typography>
 
           <Contributions />
 
