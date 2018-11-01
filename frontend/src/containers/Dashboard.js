@@ -75,7 +75,7 @@ class Dashboard extends Component {
       );
     }
     this.props.getUserProjects();
-    this.props.fetchContributors();
+    // this.props.fetchContributors();
   }
 
   handleChange = event => {

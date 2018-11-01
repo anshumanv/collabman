@@ -2,6 +2,7 @@ import { projectActions } from '../constants';
 import { fetchTasks } from './taskActions';
 import { fetchDocuments } from './documentActions';
 import { fetchUserProjects, createProject } from '../API/projects';
+import { fetchContributors } from '../actions/statsActions';
 
 // Function to fetch user projects
 export const getUserProjects = username => {
@@ -14,6 +15,7 @@ export const getUserProjects = username => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
           dispatch(setCurrentProject(response.data[0]));
+          dispatch(fetchContributors(response.data[0].project_link));
         }
       })
       .catch(err => {
@@ -40,9 +42,11 @@ const projectsFailed = () => {
 
 export const setCurrentProject = curProject => {
   return (dispatch, getState) => {
+    const userName = getState().auth.username;
     dispatch(updateProject(curProject));
-    dispatch(fetchTasks('test', curProject.slug)); // gommenasai
-    dispatch(fetchDocuments('test', curProject.slug)); // gommenasai
+    dispatch(fetchTasks(userName, curProject.slug));
+    dispatch(fetchDocuments(userName, curProject.slug));
+    dispatch(fetchContributors(curProject.project_link));
   };
 };
 
