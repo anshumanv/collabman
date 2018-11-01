@@ -140,24 +140,30 @@ class TasksCard extends Component {
             </Button>
           </div>
           <div className={classes.root}>
-            <List component="nav">
-              {tasksList.map(task => (
-                <ListItem key={task.id} button>
-                  <ListItemIcon>
-                    <SendIcon />
-                  </ListItemIcon>
-                  <ListItemText inset primary={task.task_description} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={() => this.deleteTaskConfirmation(task.task_id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
+            {tasksList.length ? (
+              <List component="nav">
+                {tasksList.map(task => (
+                  <ListItem key={task.id} button>
+                    <ListItemIcon>
+                      <SendIcon />
+                    </ListItemIcon>
+                    <ListItemText inset primary={task.task_description} />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        aria-label="Delete"
+                        onClick={() =>
+                          this.deleteTaskConfirmation(task.task_id)
+                        }
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <div style={{ fontSize: '0.8em' }}>Nothing here \ (•◡•) /</div>
+            )}
           </div>
         </CardContent>
         <Dialog
