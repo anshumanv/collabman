@@ -18,6 +18,7 @@ django-heroku = "*"
 dj-database-url = "*"
 django-cors-headers = "*"
 "django-rest-framework-social-oauth2" = "*"
+coreapi = "*"
 
 [requires]
 python_version = "3.7"
