@@ -39,6 +39,11 @@ const styles = {
   pos: {
     marginBottom: 12,
   },
+  allCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 };
 
 class Contributions extends Component {
@@ -94,7 +99,9 @@ class Contributions extends Component {
               </div>
             )
           ) : (
-            <CircularProgress />
+            <div className={classes.allCenter}>
+              <CircularProgress />
+            </div>
           )}
         </CardContent>
       </Card>
