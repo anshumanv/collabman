@@ -40,6 +40,9 @@ import {
   fetchDocuments,
 } from '../actions/documentActions';
 
+// Some icons :)
+import { FaNewspaper } from 'react-icons/fa';
+
 function TabContainer(props) {
   return (
     <Typography component="div" style={{ padding: 8 * 3 }}>
@@ -79,6 +82,12 @@ const styles = theme => ({
   heading: {
     display: 'flex',
     justifyContent: 'space-between',
+  },
+  title: {
+    marginBottom: 16,
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -160,6 +169,7 @@ class DocumentCard extends React.Component {
         <CardContent>
           <div className={classes.heading}>
             <Typography className={classes.title} color="textSecondary">
+              <FaNewspaper style={{ marginRight: '10px' }} size="2em" />
               Project Documents
             </Typography>
             <CardActions>

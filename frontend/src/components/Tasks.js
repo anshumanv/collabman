@@ -40,6 +40,9 @@ import {
   deleteSelectedTask,
 } from '../actions/taskActions';
 
+// Some icons :)
+import { IoIosList } from 'react-icons/io';
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -51,6 +54,12 @@ const styles = theme => ({
   card: {
     minWidth: 275,
     marginTop: '20px',
+  },
+  title: {
+    marginBottom: 16,
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -116,6 +125,7 @@ class TasksCard extends Component {
         <CardContent>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography className={classes.title} color="textSecondary">
+              <IoIosList size="2em" style={{ marginRight: '10px' }} />
               Tasks
             </Typography>
             <Button
