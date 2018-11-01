@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import { GoMarkGithub } from 'react-icons/go';
 
 const styles = theme => ({
   root: {
@@ -58,10 +59,8 @@ class App extends Component {
             variant="contained"
             className={classes.button}
           >
+            <GoMarkGithub style={{ marginRight: '5px' }} />
             Login
-          </Button>
-          <Button variant="contained" className={classes.button}>
-            Signup
           </Button>
         </div>
         <div className={classes.allCenter} style={{ marginTop: '20vh' }}>

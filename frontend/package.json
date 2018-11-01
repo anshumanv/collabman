@@ -41,6 +41,7 @@
     "react-chat-popup": "^1.1.2",
     "react-dev-utils": "^5.0.2",
     "react-dom": "^16.4.2",
+    "react-icons": "^3.2.2",
     "react-kawaii": "^0.6.0",
     "react-redux": "^5.0.7",
     "react-router-dom": "^4.3.1",
