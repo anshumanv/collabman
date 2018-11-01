@@ -8,6 +8,7 @@ import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
+import { GoMarkGithub } from 'react-icons/go';
 
 import {
   LineChart,
@@ -34,7 +35,7 @@ const styles = {
   },
   title: {
     marginBottom: 16,
-    fontSize: 14,
+    fontSize: 22,
   },
   pos: {
     marginBottom: 12,
@@ -84,21 +85,30 @@ class Contributions extends Component {
                     {this.props.currentProject.project_link}
                   </a>
                 </div>
-                <PieChart width={800} height={400}>
-                  <Pie
-                    activeIndex={activePieIndex}
-                    activeShape={renderActiveShape}
-                    data={contributors}
-                    cx={400}
-                    nameKey="username"
-                    dataKey="commits"
-                    cy={200}
-                    innerRadius={80}
-                    outerRadius={120}
-                    fill="#00af5b"
-                    onMouseEnter={this.onPieEnter}
-                  />
-                </PieChart>
+                <div className={classes.allCenter}>
+                  <div
+                    className={classes.allCenter}
+                    style={{ flexDirection: 'column' }}
+                  >
+                    <GoMarkGithub size="2.5em" />
+                    <div>Commit Count</div>
+                  </div>
+                  <PieChart width={800} height={400}>
+                    <Pie
+                      activeIndex={activePieIndex}
+                      activeShape={renderActiveShape}
+                      data={contributors}
+                      cx={400}
+                      nameKey="username"
+                      dataKey="commits"
+                      cy={200}
+                      innerRadius={80}
+                      outerRadius={120}
+                      fill="#00af5b"
+                      onMouseEnter={this.onPieEnter}
+                    />
+                  </PieChart>
+                </div>
               </div>
             ) : (
               <div>
