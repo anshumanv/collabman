@@ -32,6 +32,9 @@ import ExpandLess from '@material-ui/icons/ExpandLess';
 import ExpandMore from '@material-ui/icons/ExpandMore';
 import StarBorder from '@material-ui/icons/StarBorder';
 import Typography from '@material-ui/core/Typography';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import MoreVertIcon from '@material-ui/icons/MoreVert';
 
 // Actions
 import {
@@ -42,6 +45,10 @@ import {
 
 // Some icons :)
 import { IoIosList } from 'react-icons/io';
+
+const ITEM_HEIGHT = 48;
+
+const options = ['Edit', 'Delete'];
 
 const styles = theme => ({
   root: {
@@ -68,6 +75,25 @@ class TasksCard extends Component {
     open: false,
     taskTitle: '',
     taskDescription: '',
+    whichMenuSelected: null,
+  };
+
+  handleMenuClick = event => {
+    this.setState({ whichMenuSelected: event.currentTarget });
+  };
+
+  handleMenuClose = () => {
+    this.setState({ whichMenuSelected: null });
+  };
+
+  handleOptionChosen = (event, index, taskId) => {
+    this.setState({ whichMenuSelected: null });
+    if (index === 1) {
+      this.deleteTaskConfirmation(taskId);
+    }
+    if (index === 0) {
+      this.setState({ open: true });
+    }
   };
 
   handleClickOpen = () => {
@@ -113,6 +139,8 @@ class TasksCard extends Component {
   };
 
   render() {
+    const { whichMenuSelected } = this.state;
+    const isMenuOpen = Boolean(whichMenuSelected);
     const { classes, tasks } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
     let tasksList = [];
@@ -149,14 +177,40 @@ class TasksCard extends Component {
                     </ListItemIcon>
                     <ListItemText inset primary={task.task_description} />
                     <ListItemSecondaryAction>
-                      <IconButton
-                        aria-label="Delete"
-                        onClick={() =>
-                          this.deleteTaskConfirmation(task.task_id)
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
+                      <div>
+                        <IconButton
+                          aria-label="More"
+                          aria-owns={isMenuOpen ? 'long-menu' : undefined}
+                          aria-haspopup="true"
+                          onClick={this.handleMenuClick}
+                        >
+                          <MoreVertIcon />
+                        </IconButton>
+                        <Menu
+                          id="long-menu"
+                          anchorEl={whichMenuSelected}
+                          open={isMenuOpen}
+                          onClose={this.handleMenuClose}
+                          PaperProps={{
+                            style: {
+                              maxHeight: ITEM_HEIGHT * 4.5,
+                              width: 200,
+                            },
+                          }}
+                        >
+                          {options.map((option, index) => (
+                            <MenuItem
+                              key={option}
+                              selected={option === 'Edit'}
+                              onClick={event =>
+                                this.handleOptionChosen(event, index, task.id)
+                              }
+                            >
+                              {option}
+                            </MenuItem>
+                          ))}
+                        </Menu>
+                      </div>
                     </ListItemSecondaryAction>
                   </ListItem>
                 ))}
