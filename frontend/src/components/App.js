@@ -51,6 +51,7 @@ const styles = theme => ({
 class App extends Component {
   componentDidMount() {
     if (localStorage.getItem('access_token')) {
+      console.log(localStorage.getItem('access_token'));
       this.props.history.push('/dashboard');
     }
   }

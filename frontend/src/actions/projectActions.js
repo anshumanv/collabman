@@ -61,10 +61,11 @@ export const createNewProject = payload => {
     dispatch(creatingNewProject());
     console.log(payload);
     const token = getState().auth.token;
-    return createProject('anshumanv', payload, token)
+    const username = getState().auth.username;
+    return createProject(username, payload, token)
       .then(response => {
         dispatch(projectsCreationSucceed(response.data));
-        console.log(response);
+        window.location('/dashboard');
       })
       .catch(err => {
         console.log(err.response.request.response);
