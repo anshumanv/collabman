@@ -106,7 +106,7 @@ class Dashboard extends Component {
         localStorage.removeItem('access_token');
         localStorage.removeItem('username');
         console.log(res);
-        this.props.history.push('/');
+        window.location = '/';
       });
   };
 
@@ -187,7 +187,7 @@ Dashboard.propTypes = {
   fetchContributors: PropTypes.func,
   currentProject: PropTypes.object,
   saveAuth: PropTypes.func,
-  history: PropTypes.arr,
+  history: PropTypes.func,
 };
 
 const mapStateToProps = state => {

@@ -35,7 +35,7 @@ class AuthComplete extends React.Component {
 
 AuthComplete.propTypes = {
   saveAuth: PropTypes.func,
-  history: PropTypes.array,
+  history: PropTypes.obj,
 };
 
 const mapStateToProps = state => {

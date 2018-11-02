@@ -49,6 +49,12 @@ const styles = theme => ({
 });
 
 class App extends Component {
+  componentDidMount() {
+    if (localStorage.getItem('access_token')) {
+      this.props.history.push('/dashboard');
+    }
+  }
+
   render() {
     const { classes } = this.props;
     return (
@@ -76,6 +82,7 @@ class App extends Component {
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
+  history: PropTypes.func,
 };
 
 export default withStyles(styles)(App);
