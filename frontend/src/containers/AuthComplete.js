@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import { authSuccess } from '../actions/authActions';
 import { connect } from 'react-redux';
 
+import { API_URL } from '../constants';
+
 import axios from 'axios';
 
 const styles = theme => ({
@@ -15,7 +17,7 @@ const styles = theme => ({
 class AuthComplete extends React.Component {
   componentDidMount() {
     axios
-      .get('http://127.0.0.1:8000/api/v1/github_token/')
+      .get(`${API_URL}/api/v1/github_token/`)
       .then(res => {
         console.log(res.data);
         localStorage.setItem('access_token', res.data.token[0]);

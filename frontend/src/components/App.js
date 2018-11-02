@@ -3,6 +3,7 @@ import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import { GoMarkGithub } from 'react-icons/go';
+import { API_URL } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -62,7 +63,7 @@ class App extends Component {
       <div className={classes.root}>
         <div className={classes.buttonContainer}>
           <Button
-            href="http://127.0.0.1:8000/api/v1/auth/login/github/"
+            href={`${API_URL}/api/v1/auth/login/github/`}
             variant="contained"
             className={classes.button}
           >
