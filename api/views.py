@@ -64,6 +64,11 @@ class LoginView(APIView):
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
 
+class Logout(APIView):
+    def get(self, request, format=None):
+        # simply delete the token to force a login
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
 
 
 class LoginGithubView(APIView):
@@ -71,14 +76,14 @@ class LoginGithubView(APIView):
 
     def get(self, request):
         if request.user.is_authenticated:
-            print(Token.objects.filter(user=request.user))
+            if len(Token.objects.filter(user=request.user)):
+                token = Token.objects.filter(user=request.user)
+            else:
+                token = Token.objects.create(user=request.user)
             data = serializers.serialize('python', Token.objects.filter(user=request.user))
             return Response({"token": [d['pk'] for d in data], "username": request.user.username })
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-
 
 
 class ProfileList(generics.ListAPIView):

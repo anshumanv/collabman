@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 // Components
 import Contributions from '../components/Contributions';
@@ -28,6 +29,8 @@ import Divider from '@material-ui/core/Divider';
 import { getUserProjects } from '../actions/projectActions';
 import { fetchContributors } from '../actions/statsActions';
 import { authSuccess } from '../actions/authActions';
+
+import { API_URL } from '../constants';
 
 const drawerWidth = 240;
 
@@ -91,6 +94,22 @@ class Dashboard extends Component {
     window.location = '/profile/<username>';
   };
 
+  handleLogout = () => {
+    axios
+      .get(`${API_URL}/api/v1/logout/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `TOKEN ${localStorage.getItem('access_token')}`,
+        },
+      })
+      .then(res => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('username');
+        console.log(res);
+        this.props.history.push('/');
+      });
+  };
+
   render() {
     const { classes } = this.props;
     const { auth, anchorEl } = this.state;
@@ -135,7 +154,7 @@ class Dashboard extends Component {
                   onClose={this.handleClose}
                 >
                   <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                  <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                 </Menu>
               </div>
             )}
@@ -168,6 +187,7 @@ Dashboard.propTypes = {
   fetchContributors: PropTypes.func,
   currentProject: PropTypes.object,
   saveAuth: PropTypes.func,
+  history: PropTypes.arr,
 };
 
 const mapStateToProps = state => {
