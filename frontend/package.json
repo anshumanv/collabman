@@ -63,7 +63,8 @@
     "build": "node scripts/build.js",
     "test": "node scripts/test.js --env=jsdom",
     "format": "prettier --write \"src/**/*.js\"",
-    "precommit": "lint-staged"
+    "precommit": "lint-staged",
+    "postinstall": "npm run build && mv ../assets/bundles ./build && cd build && mkdir -p static/bundles && mv css js static/bundles && cd ../"
   },
   "jest": {
     "collectCoverageFrom": [

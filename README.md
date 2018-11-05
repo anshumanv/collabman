@@ -55,3 +55,30 @@ DATABASES = {
 cd frontend/
 npm i && npm start
 ```
+
+
+## Deploy
+
+Frontend is served as a django app and for some reason I couldn't find apt deployment so this is a workaround for deploying a coupled django and react app on heroku. It's adviced to make a copy of the project while deploying, quite inconvenient I know but you won't end up messing the working project structure.
+
+* Add NodeJS as a heroku buildpack
+
+```sh
+heroku buildpacks:add --index 1 heroku/nodejs
+```
+
+
+* Move the contents of the frontend app to the project root
+
+```sh
+mv frontend/* ./
+```
+
+* Should be good now
+
+```sh
+git add .
+git commit -m "..."
+git push heroku master
+```
+
