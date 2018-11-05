@@ -9,7 +9,8 @@ from .views import (
     DocumentListView, DocumentView, 
     TaskListView, TaskView, 
     SubtaskListView, SubtaskView, 
-    SubtaskLogListView, SubtaskLogView
+    SubtaskLogListView, SubtaskLogView,
+    GithubRedirect
 )
 
 from . import views
@@ -34,4 +35,5 @@ urlpatterns = [
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/", SubtaskView.as_view(), name='subtask_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/", SubtaskLogListView.as_view(), name='subtask_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/<int:sublogid>",SubtaskLogView.as_view(), name='subtask_view'),
+    url('check/', GithubRedirect.as_view(), name='some_shit')
 ]  

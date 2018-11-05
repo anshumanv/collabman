@@ -5,10 +5,11 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import generics
 from django.contrib.auth.models import User
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.shortcuts import get_object_or_404, get_list_or_404
 from django.contrib.auth import authenticate
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
+from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
 # Create your views here.
 
@@ -48,11 +49,14 @@ class ProfileAPIView(APIView):
         return Response(status=204)
 
 
-class LoginView(APIView):
-    permission_classes = ()
-    def post(self, request):
+class LoginView(generics.GenericAPIView):
+    permission_classes = (AllowAny,)
+    
+    def post(self, request, format=None):
+        print('**************')
         username = request.data.get("username")
         password = request.data.get("password")
+        print(username, password)
         user = authenticate(username=username, password=password)
         if user:
             return Response({"token": user.auth_token.key })
@@ -535,5 +539,4 @@ class SubtaskLogView(APIView):
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
             return Response(status=400)
-
 
