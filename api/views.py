@@ -13,6 +13,8 @@ from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
 # Create your views here.
 
+def get_profile_id(username):
+    return get_object_or_404(Profile, user = get_object_or_404(User, username=username)).id
 class UserCreate(generics.CreateAPIView):
     authentication_classes = ()
     permission_classes = ()
@@ -28,13 +30,13 @@ class ProfileAPIView(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
-        user_profile = get_object_or_404(Profile, id=user.id)
+        user_profile = get_object_or_404(Profile, user=user)
         data = ProfileSerializer(user_profile).data
         return Response(data)
     
     def put(self, request, username):
         user = get_object_or_404(User, username=username)
-        user_profile = get_object_or_404(Profile, id=user.id)
+        user_profile = get_object_or_404(Profile, user=user)
         serialize = ProfileSerializer(user_profile, data=request.data)
         if serialize.is_valid():
             serialize.save()
@@ -43,7 +45,7 @@ class ProfileAPIView(APIView):
     
     def delete(self, request, username):
         user = get_object_or_404(User, username=username)
-        user_profile = get_object_or_404(Profile, id=user.id)
+        user_profile = get_object_or_404(Profile, user=userget)
         user_profile.delete()
         user.delete()
         return Response(status=204)
@@ -53,15 +55,13 @@ class LoginView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
     
     def post(self, request, format=None):
-        print('**************')
         username = request.data.get("username")
         password = request.data.get("password")
-        print(username, password)
         user = authenticate(username=username, password=password)
         if user:
             return Response({"token": user.auth_token.key })
         else:
-            return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Wrong Credentials"}, status=401)
 
 class ProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()
@@ -72,17 +72,22 @@ class ProjectList(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username):
         user = get_object_or_404(User, username=username)
-        user = get_object_or_404(Profile, id=user.id)
-        projects = get_list_or_404(user.users)
+        user_profile = get_object_or_404(Profile, user=user)
+        projects = get_list_or_404(user_profile.users)
         serializer = ProjectSerializer(projects, many =True)
         return Response(serializer.data)
     
     def post(self, request, username):
         user = get_object_or_404(User, username=username)
-        uid = user.id
-        request.data['project_manager'] = uid
-        if uid not in request.data['users']:
-            request.data['users'].append(uid)
+        pid = get_object_or_404(Profile, user=user).id
+        request.data['project_manager'] = pid
+        project_members = request.data['users']
+        members_pid = []
+        for member in project_members:
+            members_pid.append(get_profile_id(username=member))
+        request.data['users'] = members_pid
+        if pid not in request.data['users']:
+            request.data['users'].append(pid)
         serialize = ProjectSerializer(data = request.data)
         if serialize.is_valid():
             serialize.save()
@@ -94,9 +99,8 @@ class ProjectView(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
-        uid = user.id
-        user = get_object_or_404(Profile, id=uid)
-        projects = get_list_or_404(user.users)
+        user_profile = get_object_or_404(Profile, user=user)
+        projects = get_list_or_404(user_profile.users)
         for project in projects:
             if project_slug == project.slug:
                 serializer = ProjectSerializer(project)
@@ -105,26 +109,31 @@ class ProjectView(APIView):
     
     def put(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
-        uid = user.id
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
-        if project.project_manager.id == uid:
+        if project.project_manager.id == user_profile.id:
             data = request.data
+            members_pid = []
+            project_members = data['users']
+            for member in project_members:
+                members_pid.append(get_profile_id(username=member))
+            data['users'] = members_pid
+            data['project_manager'] = get_profile_id(data['project_manager'])
             serializer = ProjectSerializer(project, data=data)
             if serializer.is_valid():
                 serializer.save()
-                return Response(status=201)
+                return Response(status=200)
             else:
                 return Response(serializer.errors, status=400)
         else:
             return Response(status=404)
     
     def delete(self, request, username, project_slug):
-        user = get_object_or_404(User, username=username)
-        uid = user.id
+        pid = get_profile_id(username)
         project = get_object_or_404(Project, slug=project_slug)
-        if project.project_manager.id == uid:
+        if project.project_manager.id == pid:
             project.delete()
-            return Response(status=204)
+            return Response(status=200)
         else:
             return Response(status=400)
 class DocTypeListView(generics.ListAPIView):
@@ -156,7 +165,7 @@ class DocTypeView(APIView):
         serialize = DocTypeSerializer(doctype, data=data)
         if serialize.is_valid():
             serialize.save()
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         else:
             return Response(serialize.errors, status=400)
         

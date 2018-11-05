@@ -4,34 +4,11 @@ from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 from django.contrib.auth.models import User
+from django.shortcuts import get_object_or_404, get_list_or_404
+from requests.auth import HTTPBasicAuth 
 from rest_framework.test import force_authenticate
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
 import json
-# Model Testing
-
-'''
-class ProfileModelTest(TestCase):
-    def setUp(self):
-        self.username = 'ftest'
-        self.password = 'test1test1'
-        self.user = User.objects.create_user(username=self.username, password=self.password)
-        self.user.save()
-        self.first_name = 'test'
-        self.last_name = 'one'
-        self.email = 'test1@gmail.com'
-        self.bio = 'I am first test'
-        self.location = 'LocalHost'
-        self.birthday = '1990-02-22'
-        self.profile = Profile(user=self.user, first_name=self.first_name,  last_name=self.last_name,
-                               email=self.email, bio=self.bio, location=self.location, birth_date=self.birthday)
-
-    def test_model_can_create_a_profile(self):
-        old_count = Profile.objects.count()
-        self.profile.save()
-        new_count = Profile.objects.count()
-        self.assertNotEqual(old_count, new_count)
-
-''' 
 ## API Test
 
 class BaseViewTest(APITestCase):
@@ -50,7 +27,6 @@ class BaseViewTest(APITestCase):
         url = reverse(
             "login"
         )
-        print('***********', url)
         return self.client.post(
             url,
             data=json.dumps({
@@ -76,6 +52,22 @@ class BaseViewTest(APITestCase):
                             "three", email="testthree@gmail.com")
         self.create_profile("test4", "test1test1", "test",
                             "four", email="testfour@gmail.com")
+        self.dummy_project = {
+            "project_name": "Test Project some",
+            "project_manager" : "test1",
+            "project_description": "I am a test project.",
+            "project_link": "http://somethingismissin.com",
+            "project_chat_link": "http://knows.com",
+            "calendar_api_token": "asdasd",
+            "calendar_api_key": "asdasd",
+            "git_api_key": "asdsadsd",
+            "slack_api_key": "asdasdasds",
+            "users": [
+                'test1',
+                'test2',
+                'test3'
+            ]
+        }
 
 
 class AuthLoginUserTest(BaseViewTest):
@@ -102,8 +94,8 @@ class GetAllProfileTest(BaseViewTest):
         This test ensures that all songs added in the setUp method
         exist when we make a GET request to the songs/ endpoint
         """
-        # hit the API endpoint
-        self.login_a_user(username="test_user", password="testing")
+        self.client.session.auth = HTTPBasicAuth('test1', 'test1test1')
+        t = self.client.login(username="test1", password="test1test1")
         response = self.client.get(
             reverse("profile_list")
         )
@@ -112,3 +104,67 @@ class GetAllProfileTest(BaseViewTest):
         serialized = ProfileSerializer(expected, many=True)
         self.assertEqual(response.data, serialized.data)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class ProjectListTest(BaseViewTest):
+    def setUp(self):
+        return super().setUp()
+
+    def test_project_list(self):
+        self.client.session.auth = HTTPBasicAuth('test1', 'test1test1')
+        self.client.login(username="test1", password="test1test1")
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.client.logout()
+        self.client.session.auth = HTTPBasicAuth('test1', 'test1test1')
+        self.client.login(username="test1", password="test1test1")
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        response = self.client.get(url)
+        user = get_object_or_404(User, username="test1")
+        user_profile = get_object_or_404(Profile, user=user)
+        expected = get_list_or_404(user_profile.users)
+        serialized = ProjectSerializer(expected, many=True)
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+class  ProjectViewTest(BaseViewTest):
+    
+    def setUp(self):
+        super().setUp()
+        self.username = "test1"
+        self.project_slug = "test-project-some"
+        self.client.login(username="test1", password="test1test1")
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.url = reverse('view_user_project', kwargs={'username': self.username, 'project_slug': self.project_slug})
+    
+    def test_get_project(self):
+        response = self.client.get(self.url)
+        user = get_object_or_404(User, username=self.username)
+        user_profile = get_object_or_404(Profile, user=user)
+        projects = get_list_or_404(user_profile.users)
+        serialized = None
+        for project in projects:
+            if self.project_slug == project.slug:
+                serialized = ProjectSerializer(project)
+                break
+        if serialized is None:
+            self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_put_project(self):
+        new_data = self.dummy_project
+        new_data['users'].append('test4')
+        response = self.client.put(self.url, data=json.dumps(new_data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    
+    def test_delete_project(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        
+        
+        
+        

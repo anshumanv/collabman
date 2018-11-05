@@ -10,7 +10,6 @@ from .views import (
     TaskListView, TaskView, 
     SubtaskListView, SubtaskView, 
     SubtaskLogListView, SubtaskLogView,
-    GithubRedirect
 )
 
 from . import views
@@ -22,7 +21,7 @@ urlpatterns = [
     path("user/", ProfileList.as_view(), name="profile_list"),
     path("user/signup/", UserCreate.as_view(), name="user_create"),
     path("user/signup/profile/", ProfileCreate.as_view(), name="user_create"),
-    path("user/login/", LoginView.as_view(), name="login"),
+    path("user  /login/", LoginView.as_view(), name="login"),
     path("<str:username>/project/", ProjectList.as_view(),name='view_user_projects'),
     path("<str:username>/project/<str:project_slug>/",ProjectView.as_view(), name='view_user_project'),
     path("doctype/all/", DocTypeListView.as_view(), name='checkout_all_doc_type'),
@@ -35,5 +34,4 @@ urlpatterns = [
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/", SubtaskView.as_view(), name='subtask_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/", SubtaskLogListView.as_view(), name='subtask_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/<int:sublogid>",SubtaskLogView.as_view(), name='subtask_view'),
-    url('check/', GithubRedirect.as_view(), name='some_shit')
 ]  
