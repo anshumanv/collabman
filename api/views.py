@@ -271,12 +271,13 @@ class TaskListView(APIView):
 
     def get(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             tasks = project.task_set.all()
             serialize = TaskSerializer(tasks, many=True)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -284,9 +285,10 @@ class TaskListView(APIView):
 
     def post(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             if user.id != project.project_manager_id:
                 raise  PermissionDenied
             request.data['project_id'] = project.id
@@ -294,7 +296,7 @@ class TaskListView(APIView):
             if len(tasks) > 0:
                 request.data['task_id'] = tasks[0].task_id + 1
             else:
-                request.data['task_id'] = 0
+                request.data['task_id'] = 1
             serialize = TaskSerializer(data=request.data)
             if serialize.is_valid():
                 serialize.save()
@@ -313,13 +315,14 @@ class TaskView(APIView):
 
     def get(self, request, username, project_slug, tid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             pid = project.id
             data = get_object_or_404(Task, project_id=pid, task_id=tid)
             serialize = TaskSerializer(data)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -327,9 +330,10 @@ class TaskView(APIView):
 
     def put(self, request, username, project_slug, tid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             if user.id != project.project_manager_id:
                 raise PermissionDenied
             pid = project.id
@@ -338,7 +342,7 @@ class TaskView(APIView):
             serialize = TaskSerializer(task, data=data)
             if serialize.is_valid():
                 serialize.save()
-                return Response(status=201)
+                return Response(status=200)
             else:
                 return Response(status=400)
         except Profile.DoesNotExist:
@@ -350,15 +354,16 @@ class TaskView(APIView):
 
     def delete(self, request, username, project_slug, tid):
         user = get_object_or_404(User, username=username)
+        user_profile  = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             if user.id != project.project_manager_id:
                 raise PermissionDenied
             pid = project.id
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             task.delete()
-            return Response(status=204)
+            return Response(status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
