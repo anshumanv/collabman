@@ -289,8 +289,6 @@ class TaskListView(APIView):
         project = get_object_or_404(Project, slug=project_slug)
         try:
             user = project.users.get(id=user_profile.id)
-            if user.id != project.project_manager_id:
-                raise  PermissionDenied
             request.data['project_id'] = project.id
             tasks = Task.objects.filter(project_id=project.id).order_by('-task_id')
             if len(tasks) > 0:
@@ -334,8 +332,6 @@ class TaskView(APIView):
         project = get_object_or_404(Project, slug=project_slug)
         try:
             user = project.users.get(id=user_profile.id)
-            if user.id != project.project_manager_id:
-                raise PermissionDenied
             pid = project.id
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             data = request.data
