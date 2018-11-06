@@ -77,7 +77,6 @@ const styles = theme => ({
   container: {
     display: 'flex',
     flexWrap: 'wrap',
-    height: '80vh',
     width: '60vw',
     marginTop: '10vh',
     marginLeft: '35vh',
@@ -234,35 +233,34 @@ class DocumentCard extends React.Component {
                 <DialogContentText>
                   Please enter the document details
                 </DialogContentText>
-                <TextField
-                  autoFocus
-                  margin="dense"
-                  id="task-title"
-                  onChange={e => this.handleFormUpdates(e, 'docTitle')}
-                  label="Document Title"
-                  type="text"
-                  fullWidth
-                />
-                <TextField
-                  margin="dense"
-                  id="task-content"
-                  onChange={e => this.handleFormUpdates(e, 'docLink')}
-                  label="Document Link"
-                  type="text"
-                  fullWidth
-                />
+                <form onSubmit={value => this.postNewDocument(value)}>
+                  <TextField
+                    autoFocus
+                    required
+                    margin="dense"
+                    id="task-title"
+                    onChange={e => this.handleFormUpdates(e, 'docTitle')}
+                    label="Document Title"
+                    type="text"
+                    fullWidth
+                  />
+                  <TextField
+                    required
+                    margin="dense"
+                    id="task-content"
+                    onChange={e => this.handleFormUpdates(e, 'docLink')}
+                    label="Document Link"
+                    type="text"
+                    fullWidth
+                  />
+                  <Button onClick={this.closeNewDocDialog} color="primary">
+                    Cancel
+                  </Button>
+                  <Button type="submit" color="primary">
+                    Submit
+                  </Button>
+                </form>
               </DialogContent>
-              <DialogActions>
-                <Button onClick={this.closeNewDocDialog} color="primary">
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => this.postNewDocument(value)}
-                  color="primary"
-                >
-                  Submit
-                </Button>
-              </DialogActions>
             </Dialog>
           </div>
           <div className={classes.root}>

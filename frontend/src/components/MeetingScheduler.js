@@ -7,11 +7,15 @@ import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Switch from '@material-ui/core/Switch';
+import FormLabel from '@material-ui/core/FormLabel';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormGroup from '@material-ui/core/FormGroup';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import Input from '@material-ui/core/Input';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import Checkbox from '@material-ui/core/Checkbox';
 import Button from '@material-ui/core/Button';
 import CalendarToday from '@material-ui/icons/CalendarToday';
 import TextField from '@material-ui/core/TextField';
@@ -42,7 +46,7 @@ const styles = theme => ({
     flexDirection: 'column',
   },
   textField: {
-    width: '60vw',
+    width: '40vw',
     maxWidth: '500px',
     marginLeft: theme.spacing.unit,
     marginRight: theme.spacing.unit,
@@ -52,6 +56,9 @@ const styles = theme => ({
   },
   icon: {
     fontSize: 20,
+  },
+  formControl: {
+    margin: theme.spacing.unit * 3,
   },
 });
 
@@ -73,11 +80,8 @@ class MeetingScheduler extends Component {
     date: '',
     time: '09:00',
     showAlert: false,
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-    window.location = '/project/<id>';
+    attendees: '',
+    attendeesArray: [],
   };
 
   handleSubmit = () => {
@@ -85,6 +89,22 @@ class MeetingScheduler extends Component {
   };
 
   authenticate = () => {
+    var arr = this.state.attendees.split(',');
+    arr.map(element => {
+      if (element === '' || element === '\n');
+      else if (element.startsWith('\n') && element.length !== 2) {
+        let tempObject = { email: `${element.slice(1, element.length)}` };
+        this.setState(prevState => ({
+          attendeesArray: [...prevState.attendeesArray, tempObject],
+        }));
+      } else {
+        let tempObject = { email: `${element}` };
+        this.setState(prevState => ({
+          attendeesArray: [...prevState.attendeesArray, tempObject],
+        }));
+      }
+    });
+
     let self = this;
     return gapi.auth2
       .getAuthInstance()
@@ -128,10 +148,7 @@ class MeetingScheduler extends Component {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
         },
-        attendees: [
-          { email: 'anshu.av97@gmail.com' },
-          { email: '201651062@iiitvadodara.ac.in' },
-        ],
+        attendees: `${this.state.attendeesArray}`,
         end: {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
@@ -157,7 +174,11 @@ class MeetingScheduler extends Component {
       this.setState({ [input]: event.target.value });
     else if (event.target.id === 'meeting-date') {
       this.setState({ [input]: event.target.value });
-    } else this.setState({ [input]: event.target.value });
+    } else if (event.target.id === 'meeting-time') {
+      this.setState({ [input]: event.target.value });
+    } else if (event.target.id === 'meeting-attendees') {
+      this.setState({ [input]: event.target.value });
+    }
   };
 
   validateForm = event => {
@@ -165,13 +186,12 @@ class MeetingScheduler extends Component {
     if (
       this.state.title === '' ||
       this.state.purpose === '' ||
-      this.state.date === ''
+      this.state.date === '' ||
+      this.state.attendees === ''
     ) {
-      console.log('empty');
       this.setState({ showAlert: true });
       return 0;
     }
-    console.log(this.state.date);
     this.authenticate();
   };
 
@@ -179,13 +199,9 @@ class MeetingScheduler extends Component {
     const { classes } = this.props;
     const { auth, anchorEl } = this.state;
     const open = Boolean(anchorEl);
-
     return (
       <div className={classes.container}>
         <form action="" className={classes.form} onSubmit={this.validateForm}>
-          <Typography variant="headline" component="h2">
-            Schedule Meeting
-          </Typography>
           <TextField
             id="meeting-title"
             label="Title"
@@ -194,11 +210,13 @@ class MeetingScheduler extends Component {
             placeholder="Give a suitable title"
             className={classes.textField}
             margin="normal"
+            multiline
             variant="outlined"
           />
           <TextField
             id="meeting-purpose"
             label="Purpose"
+            multiline
             type="text"
             onChange={this.handleMeetingSchedule('purpose')}
             placeholder="Purpose for scheduling"
@@ -207,10 +225,18 @@ class MeetingScheduler extends Component {
             variant="outlined"
           />
           <TextField
+            id="meeting-attendees"
+            label="Attendees"
+            multiline
+            type="text"
+            onChange={this.handleMeetingSchedule('attendees')}
+            className={classes.textField}
+            margin="normal"
+            variant="outlined"
+          />
+          <TextField
             id="meeting-date"
-            label="Meeting Date"
             type="date"
-            defaultValue="1999-12-31"
             onChange={this.handleMeetingSchedule('date')}
             className={classes.TextField}
             margin="normal"

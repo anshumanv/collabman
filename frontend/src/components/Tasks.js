@@ -111,7 +111,8 @@ class TasksCard extends Component {
       this.setState({ [input]: event.target.value });
   };
 
-  submitNewTask = () => {
+  submitNewTask = event => {
+    event.preventDefault();
     const newTaskPayload = {
       task_title: this.state.taskTitle,
       task_description: this.state.taskDescription,
@@ -228,32 +229,36 @@ class TasksCard extends Component {
           <DialogTitle id="form-dialog-title">New Task</DialogTitle>
           <DialogContent>
             <DialogContentText>Please enter the task details</DialogContentText>
-            <TextField
-              autoFocus
-              margin="dense"
-              id="task-title"
-              onChange={e => this.handleFormUpdates(e, 'taskTitle')}
-              label="Task Title"
-              type="text"
-              fullWidth
-            />
-            <TextField
-              margin="dense"
-              id="task-content"
-              onChange={e => this.handleFormUpdates(e, 'taskDescription')}
-              label="Task Content"
-              type="text"
-              fullWidth
-            />
+            <form onSubmit={this.submitNewTask}>
+              <TextField
+                multiline
+                autoFocus
+                margin="dense"
+                required
+                id="task-title"
+                onChange={e => this.handleFormUpdates(e, 'taskTitle')}
+                label="Task Title"
+                type="text"
+                fullWidth
+              />
+              <TextField
+                required
+                multiline
+                margin="dense"
+                id="task-content"
+                onChange={e => this.handleFormUpdates(e, 'taskDescription')}
+                label="Task Content"
+                type="text"
+                fullWidth
+              />
+              <Button onClick={this.handleClose} color="primary">
+                Cancel
+              </Button>
+              <Button type="submit" color="primary">
+                Submit
+              </Button>
+            </form>
           </DialogContent>
-          <DialogActions>
-            <Button onClick={this.handleClose} color="primary">
-              Cancel
-            </Button>
-            <Button onClick={this.submitNewTask} color="primary">
-              Submit
-            </Button>
-          </DialogActions>
         </Dialog>
       </Card>
     );
