@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+
+// MUI :(
 import { withStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -18,7 +21,9 @@ import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import Grid from '@material-ui/core/Grid';
-import '../styles/index.css';
+
+// Acitons
+import { fetchUserProfile } from '../actions/profileActions';
 
 const styles = theme => ({
   root: {
@@ -58,13 +63,17 @@ class Profile extends Component {
     anchorEl: null,
   };
 
+  componentDidMount() {
+    this.props.fetchProfile();
+  }
+
   handleMenu = event => {
     this.setState({ anchorEl: event.currentTarget });
   };
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-    window.location = '/project/<id>';
+    this.props.history.push('/dashboard');
   };
 
   switchToHomeScreen = () => {
@@ -111,7 +120,7 @@ class Profile extends Component {
                   open={open}
                   onClose={this.handleClose}
                 >
-                  <MenuItem onClick={this.handleClose}>Projects</MenuItem>
+                  <MenuItem onClick={this.handleClose}>Dashboard</MenuItem>
                   <MenuItem onClick={this.switchToHomeScreen}>Logout</MenuItem>
                 </Menu>
               </div>
@@ -181,6 +190,23 @@ class Profile extends Component {
 
 Profile.propTypes = {
   classes: PropTypes.object.isRequired,
+  history: PropTypes.obj,
+  fetchProfile: PropTypes.func,
 };
 
-export default withStyles(styles)(Profile);
+const mapStateToProps = state => {
+  return {};
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    fetchProfile: () => {
+      dispatch(fetchUserProfile());
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withStyles(styles)(Profile));
