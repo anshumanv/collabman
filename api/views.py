@@ -45,7 +45,7 @@ class ProfileAPIView(APIView):
     
     def delete(self, request, username):
         user = get_object_or_404(User, username=username)
-        user_profile = get_object_or_404(Profile, user=userget)
+        user_profile = get_object_or_404(Profile, user=user)
         user_profile.delete()
         user.delete()
         return Response(status=204)
@@ -376,14 +376,15 @@ class SubtaskListView(APIView):
 
     def get(self, request, username, project_slug, tid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             pid = project.id
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             subtasks = task.subtask_set.all()
             serialize = SubtaskSerializer(subtasks, many=True)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -391,12 +392,18 @@ class SubtaskListView(APIView):
 
     def post(self, request, username, project_slug, tid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             pid = project.id
-            request.data['project_id'] = pid
-            request.data['task_id'] = tid
+            task = get_object_or_404(Task, project_id=pid, task_id=tid)
+            request.data['task_id'] = task.id
+            subtasks = Subtask.objects.filter(task_id=task.id).order_by('-subtask_id')
+            if len(subtasks) > 0:
+                request.data['subtask_id'] = subtasks[0].subtask_id + 1
+            else:
+                request.data['subtask_id'] = 1
             serialize = SubtaskSerializer(data=request.data)
             if serialize.is_valid():
                 serialize.save()
@@ -413,14 +420,15 @@ class SubtaskView(APIView):
 
     def get(self, request, username, project_slug, tid, subid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             pid = project.id
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
             serialize = SubtaskSerializer(subtask)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -428,17 +436,24 @@ class SubtaskView(APIView):
 
     def put(self, request, username, project_slug, tid, subid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
+        request.data['subtask_id'] = subid
         try:
-            user = project.users.get(user=user)
+            user = project.users.get(id=user_profile.id)
             pid = project.id
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
+            if 'task_id' in request.data:
+                if request.data['task_id'] != task.id:
+                    return Response({"error" : "Cannot change task in which subtask belongs"}, status=status.HTTP_400_BAD_REQUEST)
+            else:
+                request.data['task_id'] = task.id
             data = request.data
             serialize = SubtaskSerializer(subtask, data=data)
             if serialize.is_valid():
                 serialize.save()
-                return Response(status=201)
+                return Response(status=200)
             else:
                 return Response(status=400)
         except Profile.DoesNotExist:
@@ -455,7 +470,7 @@ class SubtaskView(APIView):
             task = get_object_or_404(Task, project_id=pid, task_id=tid)
             subtask = get_object_or_404(Subtask, task_id=task.id, subtask_id=subid)
             subtask.delete()
-            return Response(status=204)
+            return Response(status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:

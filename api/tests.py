@@ -93,8 +93,7 @@ class BaseViewTest(APITestCase):
             "subtask_title": "Subtask 001",
             "subtask_description": "First subtask Hurray",
             "subtask_status": "unallocated",
-            "issue_link": "http://task1.com",
-            "task_id": 1
+            "issue_link": "http://task1.com"
         }
         self.dummy_subtasklog = {
             "sublog_id": 1,
@@ -373,31 +372,24 @@ class TaskListTest(BaseViewTest):
 
 class TaskTest(BaseViewTest):
 
-    def generate_id():
-        for i in range(3):
-            yield i+1
-
-    generator = generate_id()
-
     def setUp(self):
         super().setUp()
         self.client.login(username="test1", password="test1test1")
         self.username = "test1"
         self.project_slug = "test-project-some"
         self.tid = 1
-        self.id = next(self.generator)
         # Project setup
         url = reverse('view_user_projects', kwargs={'username': 'test1'})
         data = self.dummy_project
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.pid = response.data['id']
         ## print(response.data)
         # Task Setup
         url = reverse('task_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
         data = self.dummy_task
-        data['project_id'] = self.id + 9
+        data['project_id'] = self.pid
         data['task_id'] = 1
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
-        ## print(response.data)
         ## URL
         self.url = reverse('task_view', kwargs={'username': self.username, 'project_slug': self.project_slug, 'tid': self.tid})
 
@@ -414,11 +406,98 @@ class TaskTest(BaseViewTest):
         data = self.dummy_task
         data['task_title'] = "Let's change this"
         data['task_id'] = self.tid
+        data['project_id'] = self.pid
         response = self.client.put(self.url, data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.client.logout()
 
     def test_delete_task(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
+class SubtaskListTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="test1", password="test1test1")
+        self.username = "test1"
+        self.project_slug = "test-project-some"
+        self.tid = 1
+        # Project setup
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.pid = response.data['id']
+        # Task Setup
+        url = reverse('task_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
+        data = self.dummy_task
+        data['project_id'] =  self.pid
+        data['task_id'] = self.tid
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        ## URL
+        self.url = reverse('subtask_list_view', kwargs={'username': self.username, 'project_slug': self.project_slug, 'tid': self.tid})
+
+    def test_subtask_list(self):
+        data = self.dummy_subtask
+        response = self.client.post(self.url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.get(self.url)
+        user = get_object_or_404(User, username=self.username)
+        user_profile = get_object_or_404(Profile, user=user)
+        project = get_object_or_404(Project, slug=self.project_slug)
+        user_profile = project.users.get(id=user_profile.id)
+        task = get_object_or_404(Task, project_id=project.id, task_id=self.tid)
+        subtasks = task.subtask_set.all()
+        serialize = SubtaskSerializer(subtasks, many=True)
+        self.assertEqual(response.data, serialize.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class SubtaskTest(BaseViewTest):
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="test1", password="test1test1")
+        self.username = "test1"
+        self.project_slug = "test-project-some"
+        self.tid = 1
+        self.subid =  1
+        # Project setup
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.pid = response.data['id']
+        # Task Setup
+        url = reverse('task_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
+        data = self.dummy_task
+        data['project_id'] = self.pid
+        data['task_id'] = self.tid
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        # Subtask Setup
+        url = reverse('subtask_list_view', kwargs={'username': self.username, 'project_slug': self.project_slug, 'tid': self.tid})
+        data = self.dummy_subtask
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.subid = 1
+        ## URL
+        self.url = reverse('subtask_view', kwargs={'username': self.username, 'project_slug': self.project_slug, 'tid': self.tid, 'subid':self.subid})
+
+    def test_get_subtask(self):
+        response = self.client.get(self.url)
+        task = get_object_or_404(Task, project_id=self.pid, task_id=self.tid)
+        expected = get_object_or_404(Subtask, task_id=task.id, subtask_id=self.subid)
+        serialize = SubtaskSerializer(expected)
+        self.assertEqual(response.data, serialize.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
+    def test_put_subtask(self):
+        data = self.dummy_subtask
+        data['subtask_title'] = "Let's change this"
+        response = self.client.put(self.url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
+    def test_delete_subtask(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.client.logout()
