@@ -58,7 +58,7 @@ class LoginView(generics.GenericAPIView):
         username = request.data.get("username")
         password = request.data.get("password")
         user = authenticate(username=username, password=password)
-        if user:
+        if user is not None:
             return Response({"token": user.auth_token.key })
         else:
             return Response({"error": "Wrong Credentials"}, status=401)
@@ -157,7 +157,7 @@ class DocTypeView(APIView):
     def get(self, request, did):
         doctype = get_object_or_404(DocType, id=did)
         serialize = DocTypeSerializer(doctype)
-        return Response(serialize.data, status=201)
+        return Response(serialize.data, status=200)
     
     def put(self, request, did):
         doctype = get_object_or_404(DocType, id=did)
@@ -172,19 +172,20 @@ class DocTypeView(APIView):
     def delete(self, request, did):
         doctype = get_object_or_404(DocType, id=did)
         doctype.delete()
-        return Response(status=204)
+        return Response(status=200)
 
 class DocumentListView(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try :
-            user = project.users.get(user=user) 
+            user_profile = project.users.get(id=user_profile.id)
             documents = project.document_set.all()
             serialize = DocumentSerializer(documents, many=True)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -192,21 +193,20 @@ class DocumentListView(APIView):
 
     def post(self, request, username, project_slug):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         request.data['project_id'] = project.id
         documents =  Document.objects.filter(project_id=project.id).order_by('-document_id')
         if len(documents) > 0:
             request.data['document_id'] = documents[0].document_id + 1
         else:
-            request.data['document_id'] = 0
-            
-        print(request.data['document_id'])
+            request.data['document_id'] = 1
         try:
-            user = project.users.get(user=user)
+            user_profile = project.users.get(id=user_profile.id)
             serialize = DocumentSerializer(data=request.data)
             if serialize.is_valid():
                 serialize.save()
-                return Response(serialize.data, status=201)
+                return Response(status=201)
             else:
                 return Response(serialize.errors, status=400)
         except Profile.DoesNotExist:
@@ -218,13 +218,14 @@ class DocumentView(APIView):
     permission_classes = (IsAuthenticated,)
     def get(self, request, username, project_slug, docid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user_profile = project.users.get(id=user_profile.id)
             pid = project.id
             data = get_object_or_404(Document, project_id=pid, document_id=docid)
             serialize = DocumentSerializer(data)
-            return Response(serialize.data, status=201)
+            return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:
@@ -232,16 +233,17 @@ class DocumentView(APIView):
     
     def put(self, request, username, project_slug, docid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user_profile = project.users.get(id=user_profile.id)
             pid = project.id
             document = get_object_or_404(Document, project_id=pid, document_id=docid)
             data = request.data
             serialize = DocumentSerializer(document, data=data)
             if serialize.is_valid():
                 serialize.save()
-                return Response(status=201)
+                return Response(status=200)
             else:
                 return Response(status=400)
         except Profile.DoesNotExist:
@@ -251,13 +253,14 @@ class DocumentView(APIView):
 
     def delete(self, request, username, project_slug, docid):
         user = get_object_or_404(User, username=username)
+        user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(user=user)
+            user_profile = project.users.get(id=user_profile.id)
             pid = project.id
             document = get_object_or_404(Document, project_id=pid, document_id=docid)
             document.delete()
-            return Response(status=204)
+            return Response(status=200)
         except Profile.DoesNotExist:
             return Response(status=400)
         except Profile.MultipleObjectsReturned:

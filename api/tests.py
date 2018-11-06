@@ -50,7 +50,7 @@ class BaseViewTest(APITestCase):
                             "two", email="testtwo@gmail.com")
         self.create_profile("test3", "test3test3", "test",
                             "three", email="testthree@gmail.com")
-        self.create_profile("test4", "test1test1", "test",
+        self.create_profile("test4", "test4test4", "test",
                             "four", email="testfour@gmail.com")
         self.dummy_project = {
             "project_name": "Test Project some",
@@ -67,17 +67,31 @@ class BaseViewTest(APITestCase):
                 'test2',
                 'test3'
             ]
+        
         }
-
+        self.dummy_doctype = {
+            "template_link": "https://web.telegram.org/",
+            "template_title": "test_template",
+            "template_purpose" : "To test views"
+        }
+        
+        self.dummy_document = {
+            "document_link": "http://doc29.com",
+            "document_title": "New Document-II",
+            "project_id": 1,
+            "template_link": 5
+        }
 
 class AuthLoginUserTest(BaseViewTest):
     """
     Tests for the auth/login/ endpoint
     """
-
+    def setUp(self):
+        return super().setUp()
+    
     def test_login_user_with_valid_credentials(self):
         # test login with valid credentials
-        response = self.login_a_user("test_user", "testing")
+        response = self.login_a_user(username="test_user", password="testing")
         # assert token key exists
         self.assertIn("token", response.data)
         # assert status code is 200 OK
@@ -164,7 +178,141 @@ class  ProjectViewTest(BaseViewTest):
     def test_delete_project(self):
         response = self.client.delete(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class DocTypeViewListTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="test1", password="test1test1")
+        self.url = reverse('checkout_all_doc_type')
+    
+    def test_doc_type(self):
+        data = self.dummy_doctype
+        response = self.client.post(self.url, json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.get(self.url)
+        expected = DocType.objects.all()
+        serialized = DocTypeSerializer(expected, many=True)
+        self.assertEqual(response.data, serialized.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+class DocTypeTest(BaseViewTest):
+    
+    def generate_id():
+        for i in range(3):
+            yield i+1
+    
+    generator = generate_id()
+    def setUp(self):
+        super().setUp()
+        data = self.dummy_doctype
+        self.client.login(username="test1", password="test1test1")
+        self.url = reverse('checkout_all_doc_type')
+        self.client.post(self.url, json.dumps(data),content_type="application/json")
+        self.did = next(self.generator)
+        self.url = reverse('checkout_doc_type', kwargs={'did' : self.did})
+    
+    def test_get_doc_type(self):
+        response = self.client.get(self.url)
+        expected = get_object_or_404(DocType, id=self.did)
+        serialize = DocTypeSerializer(expected)
+        self.assertEqual(response.data, serialize.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
         
+    def test_put_doc_type(self):
+        data = self.dummy_doctype
+        data['template_title'] = "Let's change this"
+        response = self.client.put(self.url, data=json.dumps(data), content_type="application/json")
+        self.client.logout()
+    
+    def test_delete_doc_type(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
+class DocumentListTest(BaseViewTest):
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="test1", password="test1test1")
+        self.username = "test1"
+        self.project_slug = "test-project-some"
+        # Project setup
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        self.client.post(url, data=json.dumps(data), content_type="application/json")
+        # Doctype Setup
+        url = reverse('checkout_all_doc_type')
+        self.client.post(url, data=json.dumps(data), content_type="application/json")
+        data = self.dummy_doctype
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
+        self.url = reverse('documents_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
         
+    def test_documents_list(self):
+        data = self.dummy_document
+        response = self.client.post(self.url, data=json.dumps(data), content_type="application/json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        response = self.client.get(self.url)
+        user = get_object_or_404(User, username=self.username)
+        user_profile = get_object_or_404(Profile, user=user)
+        project = get_object_or_404(Project, slug=self.project_slug)
+        user_profile = project.users.get(id=user_profile.id)
+        documents = project.document_set.all()
+        serialize = DocumentSerializer(documents, many=True)
+        self.assertEqual(response.data, serialize.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class DocumentTest(BaseViewTest):
+
+    def generate_id():
+        for i in range(3):
+            yield i+1
+
+    generator = generate_id()
+
+    def setUp(self):
+        super().setUp()
+        self.client.login(username="test1", password="test1test1")
+        self.username = "test1"
+        self.project_slug = "test-project-some"
+        self.docid = 1
+        self.id = next(self.generator)
+        # Project setup
+        url = reverse('view_user_projects', kwargs={'username': 'test1'})
+        data = self.dummy_project
+        response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        # Doctype Setup
+        url = reverse('checkout_all_doc_type')
+        self.client.post(url, data=json.dumps(data), content_type="application/json")
+        data = self.dummy_doctype
+        response = self.client.post(url, json.dumps(data), content_type="application/json")
+        #Document Setup
+        data = self.dummy_document
+        data['project_id'] = self.id + 1
+        data['template_link'] = self.id + 5
+        url = reverse('documents_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
+        resp = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        ## URL
+        self.url = reverse('documents_view', kwargs={'username': self.username, 'project_slug': self.project_slug, 'docid' : self.docid})
         
-        
+
+    def test_get_doc_type(self):
+        response = self.client.get(self.url)
+        pid = project = get_object_or_404(Project, slug=self.project_slug).id
+        expected = get_object_or_404(Document, project_id=pid, document_id=self.docid)
+        serialize = DocumentSerializer(expected)
+        self.assertEqual(response.data, serialize.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
+    def test_put_doc_type(self):
+        data = self.dummy_document
+        data['document_title'] = "Let's change this"
+        response = self.client.put(self.url, data=json.dumps(data), content_type="application/json")
+        self.client.logout()
+
+    def test_delete_doc_type(self):
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.client.logout()
+
