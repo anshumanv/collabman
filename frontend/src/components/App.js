@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
+import { GoMarkGithub } from 'react-icons/go';
+import { API_URL } from '../constants';
 
 const styles = theme => ({
   root: {
@@ -48,16 +50,25 @@ const styles = theme => ({
 });
 
 class App extends Component {
+  componentDidMount() {
+    if (localStorage.getItem('access_token')) {
+      console.log(localStorage.getItem('access_token'));
+      this.props.history.push('/dashboard');
+    }
+  }
+
   render() {
     const { classes } = this.props;
     return (
       <div className={classes.root}>
         <div className={classes.buttonContainer}>
-          <Button variant="contained" className={classes.button}>
+          <Button
+            href={`${API_URL}/api/v1/auth/login/github/`}
+            variant="contained"
+            className={classes.button}
+          >
+            <GoMarkGithub style={{ marginRight: '5px' }} />
             Login
-          </Button>
-          <Button variant="contained" className={classes.button}>
-            Signup
           </Button>
         </div>
         <div className={classes.allCenter} style={{ marginTop: '20vh' }}>
@@ -73,6 +84,7 @@ class App extends Component {
 
 App.propTypes = {
   classes: PropTypes.object.isRequired,
+  history: PropTypes.func,
 };
 
 export default withStyles(styles)(App);

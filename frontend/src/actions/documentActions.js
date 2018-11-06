@@ -8,9 +8,10 @@ import {
 
 export const fetchDocuments = () => {
   return (dispatch, getState) => {
-    const username = 'test'; // gommenasai
+    const username = getState().auth.username;
+    const token = getState().auth.token;
     const projectSlug = getState().projects.currentProject.slug;
-    return fetchProjectDocuments(username, projectSlug)
+    return fetchProjectDocuments(username, projectSlug, token)
       .then(response => {
         console.log(response.data);
         dispatch(docsFetched(response.data));
@@ -37,16 +38,13 @@ const docsFailed = () => {
 export const postNewDoc = payload => {
   return (dispatch, getState) => {
     dispatch(postingNewDoc());
-    return postDocument(
-      'test',
-      getState().projects.currentProject.slug,
-      payload,
-    ) // gommenasai
+    const username = getState().auth.username;
+    const token = getState().auth.token;
+    const projectSlug = getState().projects.currentProject.slug;
+    return postDocument(username, projectSlug, payload, token)
       .then(response => {
         dispatch(docPostSuccess(response.data));
-        dispatch(
-          fetchDocuments('test', getState().projects.currentProject.slug),
-        ); // gommenasai
+        dispatch(fetchDocuments(username, projectSlug, token));
       })
       .catch(err => {
         console.log(err.response.request.responseText);
@@ -77,12 +75,13 @@ export const docPostFailed = () => {
 
 export const deleteSelectedDoc = docId => {
   return (dispatch, getState) => {
-    const username = 'test'; // gommenasai
+    const username = getState().auth.username;
+    const token = getState().auth.token;
     const projectSlug = getState().projects.currentProject.slug;
-    return deleteDocument(username, projectSlug, docId)
+    return deleteDocument(username, projectSlug, docId, token)
       .then(response => {
         dispatch(docDeletionSucceeded());
-        dispatch(fetchDocuments(username, projectSlug)); // gommenasai
+        dispatch(fetchDocuments(username, projectSlug, token)); // gommenasai
       })
       .catch(err => {
         console.log(err);

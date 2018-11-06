@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import swal from 'sweetalert';
 
 import { withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
@@ -39,6 +40,9 @@ import {
   deleteSelectedTask,
 } from '../actions/taskActions';
 
+// Some icons :)
+import { IoIosList } from 'react-icons/io';
+
 const styles = theme => ({
   root: {
     width: '100%',
@@ -50,6 +54,12 @@ const styles = theme => ({
   card: {
     minWidth: 275,
     marginTop: '20px',
+  },
+  title: {
+    marginBottom: 16,
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
   },
 });
 
@@ -85,6 +95,23 @@ class TasksCard extends Component {
     this.handleClose();
   };
 
+  deleteTaskConfirmation = taskId => {
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then(willDelete => {
+      if (willDelete) {
+        this.props.deleteTask(taskId);
+        swal('Poof! Task has been deleted!', {
+          icon: 'success',
+        });
+      }
+    });
+  };
+
   render() {
     const { classes, tasks } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
@@ -98,6 +125,7 @@ class TasksCard extends Component {
         <CardContent>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography className={classes.title} color="textSecondary">
+              <IoIosList size="2em" style={{ marginRight: '10px' }} />
               Tasks
             </Typography>
             <Button
@@ -112,24 +140,30 @@ class TasksCard extends Component {
             </Button>
           </div>
           <div className={classes.root}>
-            <List component="nav">
-              {tasksList.map(task => (
-                <ListItem key={task.id} button>
-                  <ListItemIcon>
-                    <SendIcon />
-                  </ListItemIcon>
-                  <ListItemText inset primary={task.task_description} />
-                  <ListItemSecondaryAction>
-                    <IconButton
-                      aria-label="Delete"
-                      onClick={() => this.props.deleteTask(task.task_id)}
-                    >
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
+            {tasksList.length ? (
+              <List component="nav">
+                {tasksList.map(task => (
+                  <ListItem key={task.id} button>
+                    <ListItemIcon>
+                      <SendIcon />
+                    </ListItemIcon>
+                    <ListItemText inset primary={task.task_description} />
+                    <ListItemSecondaryAction>
+                      <IconButton
+                        aria-label="Delete"
+                        onClick={() =>
+                          this.deleteTaskConfirmation(task.task_id)
+                        }
+                      >
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            ) : (
+              <div style={{ fontSize: '0.8em' }}>Nothing here \ (•◡•) /</div>
+            )}
           </div>
         </CardContent>
         <Dialog

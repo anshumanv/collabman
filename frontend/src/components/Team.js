@@ -13,6 +13,9 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 import deepPurple from '@material-ui/core/colors/deepPurple';
 import Typography from '@material-ui/core/Typography';
 
+// Some icons :)
+import { IoIosPeople } from 'react-icons/io';
+
 const styles = {
   card: {
     minWidth: 275,
@@ -25,7 +28,9 @@ const styles = {
   },
   title: {
     marginBottom: 16,
-    fontSize: 14,
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
   },
   pos: {
     marginBottom: 12,
@@ -61,6 +66,7 @@ class TeamCard extends Component {
       <Card className={classes.card}>
         <CardContent>
           <Typography className={classes.title} color="textSecondary">
+            <IoIosPeople size="2em" style={{ marginRight: '10px' }} />
             Team
           </Typography>
           <div className={classes.row}>

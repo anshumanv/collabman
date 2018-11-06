@@ -2,12 +2,15 @@ import { projectActions } from '../constants';
 import { fetchTasks } from './taskActions';
 import { fetchDocuments } from './documentActions';
 import { fetchUserProjects, createProject } from '../API/projects';
+import { fetchContributors } from '../actions/statsActions';
 
 // Function to fetch user projects
 export const getUserProjects = username => {
   return (dispatch, getState) => {
     dispatch(projectsLoading());
-    return fetchUserProjects(username)
+    const token = getState().auth.token;
+    const username = getState().auth.username;
+    return fetchUserProjects(username, token)
       .then(response => {
         dispatch(projectsFetched(response.data));
         if (response.data.length) {
@@ -15,6 +18,7 @@ export const getUserProjects = username => {
         }
       })
       .catch(err => {
+        console.log(err);
         dispatch(projectsFailed());
       });
   };
@@ -37,9 +41,11 @@ const projectsFailed = () => {
 
 export const setCurrentProject = curProject => {
   return (dispatch, getState) => {
+    const userName = getState().auth.username;
     dispatch(updateProject(curProject));
-    dispatch(fetchTasks('test', curProject.slug)); // gommenasai
-    dispatch(fetchDocuments('test', curProject.slug)); // gommenasai
+    dispatch(fetchTasks(userName, curProject.slug));
+    dispatch(fetchDocuments(userName, curProject.slug));
+    dispatch(fetchContributors(curProject.project_link));
   };
 };
 
@@ -54,10 +60,12 @@ export const createNewProject = payload => {
   return (dispatch, getState) => {
     dispatch(creatingNewProject());
     console.log(payload);
-    return createProject('test', payload)
+    const token = getState().auth.token;
+    const username = getState().auth.username;
+    return createProject(username, payload, token)
       .then(response => {
         dispatch(projectsCreationSucceed(response.data));
-        console.log(response);
+        window.location('/dashboard');
       })
       .catch(err => {
         console.log(err.response.request.response);

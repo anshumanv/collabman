@@ -4,9 +4,11 @@ import { fetchProjectTasks, postTask, deleteTask } from '../API/tasks';
 
 export const fetchTasks = () => {
   return (dispatch, getState) => {
-    const username = 'test'; // gommenasai
+    dispatch(fetchingTasks());
+    const username = getState().auth.username;
+    const token = getState().auth.token;
     const projectSlug = getState().projects.currentProject.slug;
-    return fetchProjectTasks(username, projectSlug)
+    return fetchProjectTasks(username, projectSlug, token)
       .then(response => {
         dispatch(tasksFetched(response.data));
       })
@@ -24,6 +26,12 @@ const tasksFetched = tasks => {
   };
 };
 
+const fetchingTasks = () => {
+  return {
+    type: taskActions.FETCH_TASKS_LOADING,
+  };
+};
+
 const tasksFailed = () => {
   return {
     type: taskActions.FETCH_TASKS_FAILED,
@@ -33,10 +41,13 @@ const tasksFailed = () => {
 export const postNewTask = payload => {
   return (dispatch, getState) => {
     dispatch(postingNewTask());
-    return postTask('test', getState().projects.currentProject.slug, payload) // gommenasai
+    const projectSlug = getState().projects.currentProject.slug;
+    const token = getState().auth.token;
+    const username = getState().auth.username;
+    return postTask(username, projectSlug, payload, token)
       .then(response => {
         dispatch(taskPostSuccess(response.data));
-        dispatch(fetchTasks('test', getState().projects.currentProject.slug)); // gommenasai
+        dispatch(fetchTasks(username, projectSlug, token)); // gommenasai
       })
       .catch(err => {
         console.log(err);
@@ -67,12 +78,13 @@ export const taskPostFailed = () => {
 
 export const deleteSelectedTask = taskId => {
   return (dispatch, getState) => {
-    const username = 'test'; // gommenasai
+    const username = getState().auth.username;
+    const token = getState().auth.token;
     const projectSlug = getState().projects.currentProject.slug;
-    return deleteTask(username, projectSlug, taskId)
+    return deleteTask(username, projectSlug, taskId, token)
       .then(response => {
         dispatch(taskDeletionSucceeded());
-        dispatch(fetchTasks(username, projectSlug)); // gommenasai
+        dispatch(fetchTasks(username, projectSlug, token));
       })
       .catch(err => {
         console.log(err);

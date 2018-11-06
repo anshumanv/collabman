@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import swal from 'sweetalert';
 
 // MUI :(
 import { withStyles } from '@material-ui/core/styles';
@@ -38,6 +39,9 @@ import {
   deleteSelectedDoc,
   fetchDocuments,
 } from '../actions/documentActions';
+
+// Some icons :)
+import { FaNewspaper } from 'react-icons/fa';
 
 function TabContainer(props) {
   return (
@@ -79,6 +83,12 @@ const styles = theme => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  title: {
+    marginBottom: 16,
+    fontSize: 22,
+    display: 'flex',
+    alignItems: 'center',
+  },
 });
 
 class DocumentCard extends React.Component {
@@ -87,6 +97,7 @@ class DocumentCard extends React.Component {
     meetingModal: false,
     docTitle: '',
     docLink: '',
+    newDocDialog: false,
   };
 
   handleOpen = () => {
@@ -126,6 +137,23 @@ class DocumentCard extends React.Component {
     this.closeNewDocDialog();
   };
 
+  deleteDocConfirmation = docId => {
+    swal({
+      title: 'Are you sure?',
+      text: 'Once deleted, you will not be able to recover this!',
+      icon: 'warning',
+      buttons: true,
+      dangerMode: true,
+    }).then(willDelete => {
+      if (willDelete) {
+        this.props.deleteDocument(docId);
+        swal('Poof! Document has been deleted!', {
+          icon: 'success',
+        });
+      }
+    });
+  };
+
   render() {
     const { classes, docs } = this.props;
     const { value } = this.state;
@@ -141,6 +169,7 @@ class DocumentCard extends React.Component {
         <CardContent>
           <div className={classes.heading}>
             <Typography className={classes.title} color="textSecondary">
+              <FaNewspaper style={{ marginRight: '10px' }} size="2em" />
               Project Documents
             </Typography>
             <CardActions>
@@ -242,7 +271,7 @@ class DocumentCard extends React.Component {
                         <IconButton
                           aria-label="Delete"
                           onClick={() =>
-                            this.props.deleteDocument(somedoc.document_id)
+                            this.deleteDocConfirmation(somedoc.document_id)
                           }
                         >
                           <DeleteIcon />
@@ -264,7 +293,7 @@ class DocumentCard extends React.Component {
 
 DocumentCard.propTypes = {
   classes: PropTypes.object.isRequired,
-  docs: PropTypes.array,
+  docs: PropTypes.object,
   deleteDocument: PropTypes.func,
   postDocument: PropTypes.func,
   fetchProjectDocs: PropTypes.func,

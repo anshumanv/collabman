@@ -15,7 +15,7 @@ export default class Redirect extends React.Component {
   componentWillMount() {
     let params = window.location.search.substr(1);
     let codeParam = params.split('&')[0].split('=')[1];
-    console.log(codeParam);
+    //console.log(codeParam);
     axios
       .get(
         `https://slack.com/api/oauth.access?client_id=${
@@ -25,18 +25,18 @@ export default class Redirect extends React.Component {
         }&code=${codeParam}`,
       )
       .then(response => {
-        console.log(response.data.access_token);
+        // console.log(response.data.access_token);
         this.setState({ token: response.data.access_token });
         if (!response.data.access_token) {
-          console.log('not now');
+          // console.log('not now');
         } else {
           this.setState({ isTokenRecieved: true });
         }
       });
-    console.log(
-      process.env.REACT_APP_SLACK_CLIENT_ID,
-      process.env.REACT_APP_SLACK_CLIENT_SECRET,
-    );
+    // console.log(
+    //   process.env.REACT_APP_SLACK_CLIENT_ID,
+    //   process.env.REACT_APP_SLACK_CLIENT_SECRET,
+    // );
   }
 
   componentDidMount() {
@@ -44,22 +44,21 @@ export default class Redirect extends React.Component {
   }
 
   handleNewUserMessage(newMessage) {
-    console.log(`New message incoming! ${newMessage}`);
-    axios
-      .post(
-        `https://slack.com/api/chat.postMessage?token=${
-          this.state.token
-        }&channel=CDL733HC4&text=${newMessage}`,
-      )
-      .then(message => console.log(message));
+    // console.log(`New message incoming! ${newMessage}`);
+    axios.post(
+      `https://slack.com/api/chat.postMessage?token=${
+        this.state.token
+      }&channel=CDL733HC4&text=${newMessage}`,
+    );
+    // .then(message => console.log(message));
   }
 
   handleClick() {
-    console.log('magic will happen');
+    // console.log('magic will happen');
   }
 
   render() {
-    console.log(this.state.token);
+    // console.log(this.state.token);
     axios
       .get(
         `https://slack.com/api/conversations.history?token=${
@@ -67,7 +66,7 @@ export default class Redirect extends React.Component {
         }&channel=CDL733HC4`,
       )
       .then(response => {
-        console.log(response, response.data.messages);
+        // console.log(response, response.data.messages);
         for (let message in response.data.messages)
           addResponseMessage(
             response.data.messages[response.data.messages.length - 1 - message]

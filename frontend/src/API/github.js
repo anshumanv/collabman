@@ -2,8 +2,9 @@ import axios from 'axios';
 import { GITHUB_API_URL } from '../constants';
 
 // Get repository contributors
-export const fetchRepoContributors = repoName => {
+export const fetchRepoContributors = repoLink => {
+  const [userName, repoName] = repoLink.split('/').slice(-2); // I love this
   return axios.get(
-    `${GITHUB_API_URL}/repos/anshumanv/ongaku-desktop/stats/contributors`, // Todo: need to replace by username and repo
+    `${GITHUB_API_URL}/repos/${userName}/${repoName}/stats/contributors`,
   );
 };

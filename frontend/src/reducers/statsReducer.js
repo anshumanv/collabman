@@ -14,7 +14,7 @@ export const statsReducer = (state = initialState, action) => {
         contributorsFetched: true,
       };
     case githubActions.FETCH_CONTRIBUTION_FAILED:
-      return state;
+      return { ...state, contributorsFetched: true, contributors: [] };
     default:
       return state;
   }

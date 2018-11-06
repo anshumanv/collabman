@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // Components
 import Contributions from '../components/Contributions';
@@ -27,6 +29,9 @@ import Divider from '@material-ui/core/Divider';
 // Actions
 import { getUserProjects } from '../actions/projectActions';
 import { fetchContributors } from '../actions/statsActions';
+import { authSuccess } from '../actions/authActions';
+
+import { API_URL } from '../constants';
 
 const drawerWidth = 240;
 
@@ -67,10 +72,17 @@ class Dashboard extends Component {
   };
 
   componentDidMount() {
-    this.props.getUserProjects('test');
-    this.props.fetchContributors('ongaku-desktop');
+    if (localStorage.getItem('access_token')) {
+      this.props.saveAuth(
+        localStorage.getItem('access_token'),
+        localStorage.getItem('username'),
+      );
+    }
+    this.props.getUserProjects();
+    // this.props.fetchContributors();
   }
 
+  // I did not write any of these lame functions ~anshumanv
   handleChange = event => {
     this.setState({ auth: event.target.checked });
   };
@@ -81,7 +93,23 @@ class Dashboard extends Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-    window.location = '/profile/<username>';
+    this.props.history.push('/profile');
+  };
+
+  handleLogout = () => {
+    axios
+      .get(`${API_URL}/api/v1/logout/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `TOKEN ${localStorage.getItem('access_token')}`,
+        },
+      })
+      .then(res => {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('username');
+        console.log(res);
+        this.props.history.push('/');
+      });
   };
 
   render() {
@@ -125,10 +153,10 @@ class Dashboard extends Component {
                     horizontal: 'right',
                   }}
                   open={open}
-                  onClose={this.handleClose}
+                  onClose={() => this.setState({ anchorEl: null })}
                 >
                   <MenuItem onClick={this.handleClose}>Profile</MenuItem>
-                  <MenuItem onClick={this.handleClose}>Logout</MenuItem>
+                  <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
                 </Menu>
               </div>
             )}
@@ -139,7 +167,6 @@ class Dashboard extends Component {
 
         <main className={classes.content}>
           <div className={classes.toolbar} />
-          <Typography noWrap>{'Welcome to collabman!'}</Typography>
 
           <Contributions />
 
@@ -160,12 +187,16 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
-  currentProject: PropTypes.object,
+  currentProject: PropTypes.func,
+  saveAuth: PropTypes.func,
+  history: PropTypes.obj,
+  auth: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     currentProject: state.projects.currentProject,
+    auth: state.auth,
   };
 };
 
@@ -176,6 +207,9 @@ const mapDispatchToProps = dispatch => {
     },
     fetchContributors: project => {
       return dispatch(fetchContributors(project));
+    },
+    saveAuth: (token, username) => {
+      dispatch(authSuccess(token, username));
     },
   };
 };

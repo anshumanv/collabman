@@ -12,14 +12,13 @@ from rest_framework.authtoken.models import Token
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
     if created:
-        Token.objects.create(user=instance)
-
+        if len(Token.objects.filter(user=instance)) == 0:
+            Token.objects.create(user=instance)
+        if len(Profile.objects.filter(user=instance)) == 0:
+            Profile.objects.create(user=instance)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=20)
-    last_name = models.CharField(max_length=20)
-    email = models.EmailField(unique=True, blank=False, null=False)
     bio = models.TextField(max_length=500, blank=True)
     location = models.CharField(max_length=30, blank=True)
     birth_date = models.DateField(null=True, blank=True)

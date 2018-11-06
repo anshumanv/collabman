@@ -70,32 +70,25 @@ class Sidebar extends Component {
             New Project
           </Button>
         </Link>
-        <div className={classes.drawerSection}>My Projects</div>
+        <div className={classes.drawerSection}>Projects</div>
         {projectsData && (
           <List>
             <div>
               {projectsData.map(project => (
                 <ListItem
                   button
-                  key={project.project_name}
+                  key={project.id}
+                  style={{
+                    backgroundColor:
+                      project.id ===
+                      (this.props.currentProject
+                        ? this.props.currentProject.id
+                        : 0)
+                        ? 'darkgray'
+                        : '',
+                  }}
                   onClick={() => this.props.switchProject(project)}
                 >
-                  <ListItemIcon>
-                    <InboxIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={project.project_name} />
-                </ListItem>
-              ))}
-            </div>
-          </List>
-        )}
-        <Divider />
-        <div className={classes.drawerSection}>Collaborating on</div>
-        {projectsData && (
-          <List>
-            <div>
-              {projectsData.map(project => (
-                <ListItem button key={project.project_name}>
                   <ListItemIcon>
                     <InboxIcon />
                   </ListItemIcon>
@@ -113,12 +106,14 @@ class Sidebar extends Component {
 Sidebar.propTypes = {
   classes: PropTypes.object.isRequired,
   projects: PropTypes.array,
+  currentProject: PropTypes.object,
   switchProject: PropTypes.func,
 };
 
 const mapStateToProps = state => {
   return {
     projects: state.projects.userProjects,
+    currentProject: state.projects.currentProject,
   };
 };
 

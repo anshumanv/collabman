@@ -6,7 +6,9 @@ import Card from '@material-ui/core/Card';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
+import { GoMarkGithub } from 'react-icons/go';
 
 import {
   LineChart,
@@ -33,10 +35,15 @@ const styles = {
   },
   title: {
     marginBottom: 16,
-    fontSize: 14,
+    fontSize: 22,
   },
   pos: {
     marginBottom: 12,
+  },
+  allCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 };
 
@@ -66,22 +73,54 @@ class Contributions extends Component {
           <Typography className={classes.title} color="textSecondary">
             Contributions
           </Typography>
-          <div>Contributors to the project</div>
-          <PieChart width={800} height={400}>
-            <Pie
-              activeIndex={activePieIndex}
-              activeShape={renderActiveShape}
-              data={contributors}
-              cx={400}
-              nameKey="username"
-              dataKey="commits"
-              cy={200}
-              innerRadius={80}
-              outerRadius={120}
-              fill="#00af5b"
-              onMouseEnter={this.onPieEnter}
-            />
-          </PieChart>
+          {this.props.contributorsFetched ? (
+            this.props.contributors.length ? (
+              <div>
+                <div>
+                  Code contribution overview -{' '}
+                  <a
+                    target="_blank"
+                    href={this.props.currentProject.project_link}
+                  >
+                    {this.props.currentProject.project_link}
+                  </a>
+                </div>
+                <div className={classes.allCenter}>
+                  <div
+                    className={classes.allCenter}
+                    style={{ flexDirection: 'column' }}
+                  >
+                    <GoMarkGithub size="2.5em" />
+                    <div>Commit Count</div>
+                  </div>
+                  <PieChart width={800} height={400}>
+                    <Pie
+                      activeIndex={activePieIndex}
+                      activeShape={renderActiveShape}
+                      data={contributors}
+                      cx={400}
+                      nameKey="username"
+                      dataKey="commits"
+                      cy={200}
+                      innerRadius={80}
+                      outerRadius={120}
+                      fill="#00af5b"
+                      onMouseEnter={this.onPieEnter}
+                    />
+                  </PieChart>
+                </div>
+              </div>
+            ) : (
+              <div>
+                Failed to fetch project contributors, please check your project
+                link
+              </div>
+            )
+          ) : (
+            <div className={classes.allCenter}>
+              <CircularProgress />
+            </div>
+          )}
         </CardContent>
       </Card>
     );
@@ -178,11 +217,15 @@ renderActiveShape.propTypes = {
 Contributions.propTypes = {
   classes: PropTypes.object.isRequired,
   contributors: PropTypes.array,
+  contributorsFetched: PropTypes.bool,
+  currentProject: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     contributors: state.stats.contributors,
+    contributorsFetched: state.stats.contributorsFetched,
+    currentProject: state.projects.currentProject,
   };
 };
 

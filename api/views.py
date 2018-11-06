@@ -11,6 +11,10 @@ from django.contrib.auth import authenticate
 from .models import Profile, Project, DocType, Document, Task, Subtask, SubtaskLog
 from rest_framework.authtoken.models import Token
 from .serializers import UserSerializer, ProfileSerializer, ProjectSerializer, DocTypeSerializer, DocumentSerializer, TaskSerializer, SubtaskSerializer, SubtaskLogSerializer
+from rest_framework.authtoken.models import Token
+from django.core import serializers
+
+
 # Create your views here.
 
 def get_profile_id(username):
@@ -62,6 +66,28 @@ class LoginView(generics.GenericAPIView):
             return Response({"token": user.auth_token.key })
         else:
             return Response({"error": "Wrong Credentials"}, status=401)
+
+class Logout(APIView):
+    def get(self, request, format=None):
+        # simply delete the token to force a login
+        request.user.auth_token.delete()
+        return Response(status=status.HTTP_200_OK)
+
+
+class LoginGithubView(APIView):
+    permission_classes = ()
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            if len(Token.objects.filter(user=request.user)):
+                token = Token.objects.filter(user=request.user)
+            else:
+                token = Token.objects.create(user=request.user)
+            data = serializers.serialize('python', Token.objects.filter(user=request.user))
+            return Response({"token": [d['pk'] for d in data], "username": request.user.username })
+        else:
+            return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
+
 
 class ProfileList(generics.ListAPIView):
     queryset = Profile.objects.all()

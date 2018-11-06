@@ -61,7 +61,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
+
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 ROOT_URLCONF = 'collabman.urls'
 
@@ -95,9 +98,10 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'collabman.wsgi.application'
 
-
-SOCIAL_AUTH_GITHUB_KEY = 'a5a1a135d549c4af413f'
-SOCIAL_AUTH_GITHUB_SECRET = '5c85f574c4c63573672d538e7ae4b199fe84f563'
+SOCIAL_AUTH_GITHUB_KEY = '16ff0c62d8db6bab713a'
+SOCIAL_AUTH_GITHUB_SECRET = '3bfa7b4ac399770144750ebd5f24333492eae78e'
+SOCIAL_AUTH_GITHUB_SCOPE = ['user']
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/auth/complete'
 
 AUTHENTICATION_BACKENDS = (
    'social_core.backends.github.GithubOAuth2',
@@ -189,5 +193,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = ( os.path.join(BASE_DIR, 'static'), )
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
 
 # django_heroku.settings(locals())

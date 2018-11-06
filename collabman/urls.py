@@ -17,9 +17,11 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf.urls import url
 from django.views.generic import TemplateView
+from rest_framework.documentation import include_docs_urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/v1/', include('api.urls')),
-    #url(r'^', TemplateView.as_view(template_name="index.html")),
+    url(r'^docs/', include_docs_urls(title='API - collabman', authentication_classes=[], permission_classes=[])),
+    url(r'^', TemplateView.as_view(template_name="index.html")),
 ]
