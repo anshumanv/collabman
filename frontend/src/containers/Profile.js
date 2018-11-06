@@ -75,7 +75,7 @@ class Profile extends Component {
       <div className={classes.root}>
         <div className="profile-description">
           <Paper className={classes.paper} elevation={1}>
-            {profile.email ? (
+            {profile.user ? (
               <React.Fragment>
                 <div className="profile-description">
                   <Grid
@@ -113,7 +113,7 @@ class Profile extends Component {
                         component="h1"
                         style={{ fontSize: '28px' }}
                       >
-                        {`${profile.first_name} ${profile.last_name}`}
+                        {`${profile.user.first_name} ${profile.user.last_name}`}
                       </Typography>
                     </Grid>
                     <Grid item style={{ paddingTop: '10px' }}>
@@ -122,7 +122,7 @@ class Profile extends Component {
                         component="h3"
                         style={{ fontSize: '19px' }}
                       >
-                        {profile.email}
+                        {profile.user.email}
                       </Typography>
                     </Grid>
                     <Grid item style={{ paddingTop: '10px' }}>
