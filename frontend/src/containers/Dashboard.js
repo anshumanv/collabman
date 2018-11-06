@@ -7,7 +7,6 @@ import axios from 'axios';
 import Contributions from '../components/Contributions';
 import TeamCard from '../components/Team';
 import Tasks from '../components/Tasks';
-import NewProject from './NewProject';
 import DocumentsCard from '../components/Documents';
 import Sidebar from '../components/Sidebar.js';
 import ChatWindow from '../components/Chat.js';
