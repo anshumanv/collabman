@@ -21,9 +21,11 @@ import Avatar from '@material-ui/core/Avatar';
 import HomeIcon from '@material-ui/icons/Home';
 import AccessAlarmIcon from '@material-ui/icons/AccessAlarm';
 import Grid from '@material-ui/core/Grid';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 // Acitons
 import { fetchUserProfile } from '../actions/profileActions';
+import { authSuccess } from '../actions/authActions';
 
 const styles = theme => ({
   root: {
@@ -56,131 +58,95 @@ const styles = theme => ({
 });
 
 class Profile extends Component {
-  static propTypes = {};
-
-  state = {
-    auth: true,
-    anchorEl: null,
-  };
-
   componentDidMount() {
+    if (localStorage.getItem('access_token')) {
+      this.props.saveAuth(
+        localStorage.getItem('access_token'),
+        localStorage.getItem('username'),
+      );
+    }
     this.props.fetchProfile();
   }
 
-  handleMenu = event => {
-    this.setState({ anchorEl: event.currentTarget });
-  };
-
-  handleClose = () => {
-    this.setState({ anchorEl: null });
-    this.props.history.push('/dashboard');
-  };
-
-  switchToHomeScreen = () => {
-    window.location = '/';
-  };
-
   render() {
-    const { classes } = this.props;
-    const { auth, anchorEl } = this.state;
-    const open = Boolean(anchorEl);
-
+    const { classes, auth } = this.props;
+    const { profile } = auth;
     return (
       <div className={classes.root}>
-        <AppBar position="static">
-          <Toolbar>
-            <Typography
-              variant="title"
-              color="inherit"
-              className={classes.grow}
-            >
-              collabman
-            </Typography>
-            {auth && (
-              <div>
-                <IconButton
-                  aria-owns={open ? 'menu-appbar' : null}
-                  aria-haspopup="true"
-                  onClick={this.handleMenu}
-                  color="inherit"
-                >
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'right',
-                  }}
-                  open={open}
-                  onClose={this.handleClose}
-                >
-                  <MenuItem onClick={this.handleClose}>Dashboard</MenuItem>
-                  <MenuItem onClick={this.switchToHomeScreen}>Logout</MenuItem>
-                </Menu>
-              </div>
-            )}
-          </Toolbar>
-        </AppBar>
-
         <div className="profile-description">
           <Paper className={classes.paper} elevation={1}>
-            <React.Fragment>
-              <div className="profile-description">
-                <Grid
-                  container
-                  direction="column"
-                  justify="space-evenly"
-                  alignItems="center"
-                  style={{ paddingTop: '80px' }}
-                >
-                  <Grid item>
-                    <Avatar
-                      alt="Erlich B."
-                      src=""
-                      className={classNames(classes.bigAvatar)}
-                    />
+            {profile.email ? (
+              <React.Fragment>
+                <div className="profile-description">
+                  <Grid
+                    container
+                    direction="column"
+                    justify="space-evenly"
+                    alignItems="center"
+                    style={{ paddingTop: '80px' }}
+                  >
+                    <Grid item>
+                      <Avatar
+                        alt="Erlich B."
+                        src={
+                          auth.username
+                            ? `https://avatars.githubusercontent.com/${
+                                auth.username
+                              }`
+                            : ''
+                        }
+                        className={classNames(classes.bigAvatar)}
+                      />
+                    </Grid>
+                    <Grid item style={{ paddingTop: '30px' }}>
+                      <Typography
+                        variant="h3"
+                        component="h3"
+                        style={{ fontSize: '19px' }}
+                      >
+                        {`User ID - ${profile.id}`}
+                      </Typography>
+                    </Grid>
+                    <Grid item style={{ paddingTop: '10px' }}>
+                      <Typography
+                        variant="title"
+                        component="h1"
+                        style={{ fontSize: '28px' }}
+                      >
+                        {`${profile.first_name} ${profile.last_name}`}
+                      </Typography>
+                    </Grid>
+                    <Grid item style={{ paddingTop: '10px' }}>
+                      <Typography
+                        variant="h3"
+                        component="h3"
+                        style={{ fontSize: '19px' }}
+                      >
+                        {profile.email}
+                      </Typography>
+                    </Grid>
+                    <Grid item style={{ paddingTop: '10px' }}>
+                      <Typography
+                        variant="h3"
+                        component="h3"
+                        style={{ fontSize: '19px' }}
+                      >
+                        {profile.bio}
+                      </Typography>
+                    </Grid>
+                    <Grid item style={{ paddingTop: '10px' }}>
+                      <AccountCircle />
+                      <AccessAlarmIcon />
+                      <HomeIcon />
+                    </Grid>
                   </Grid>
-                  <Grid item style={{ paddingTop: '80px' }}>
-                    <Typography
-                      variant="title"
-                      component="h1"
-                      style={{ fontSize: '28px' }}
-                    >
-                      Erlich Bachman
-                    </Typography>
-                  </Grid>
-                  <Grid item style={{ paddingTop: '40px' }}>
-                    <Typography
-                      variant="h3"
-                      component="h3"
-                      style={{ fontSize: '19px' }}
-                    >
-                      Startup Guru
-                    </Typography>
-                  </Grid>
-                  <Grid item style={{ paddingTop: '60px' }}>
-                    <Typography
-                      variant="h3"
-                      component="h3"
-                      style={{ fontSize: '19px' }}
-                    >
-                      Profile Links
-                    </Typography>
-                  </Grid>
-                  <Grid item style={{ paddingTop: '30px' }}>
-                    <AccountCircle />
-                    <AccessAlarmIcon />
-                    <HomeIcon />
-                  </Grid>
-                </Grid>
+                </div>
+              </React.Fragment>
+            ) : (
+              <div className={classes.allCenter}>
+                <CircularProgress />
               </div>
-            </React.Fragment>
+            )}
           </Paper>
         </div>
       </div>
@@ -192,16 +158,24 @@ Profile.propTypes = {
   classes: PropTypes.object.isRequired,
   history: PropTypes.obj,
   fetchProfile: PropTypes.func,
+  saveAuth: PropTypes.func,
+  profile: PropTypes.obj,
+  auth: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
-  return {};
+  return {
+    auth: state.auth,
+  };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     fetchProfile: () => {
       dispatch(fetchUserProfile());
+    },
+    saveAuth: (token, username) => {
+      dispatch(authSuccess(token, username));
     },
   };
 };
