@@ -15,13 +15,12 @@ class BaseViewTest(APITestCase):
     client = APIClient()
 
     @staticmethod
-    def create_user(username, password):
-        user = User.objects.create_user(username=username, password=password)
+    def create_user(username, password, first_name, last_name, email):
+        user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         return user
 
     def create_profile(self, username, password, first_name, last_name, email):
-        user = self.create_user(username, password)
-        Profile.objects.create(user=user, first_name=first_name, last_name=last_name, email=email)
+        user = self.create_user(username, password, first_name, last_name, email)
 
     def login_a_user(self, username="", password=""):
         url = reverse(
@@ -128,14 +127,12 @@ class ProjectListTest(BaseViewTest):
         return super().setUp()
 
     def test_project_list(self):
-        self.client.session.auth = HTTPBasicAuth('test1', 'test1test1')
         self.client.login(username="test1", password="test1test1")
         url = reverse('view_user_projects', kwargs={'username': 'test1'})
         data = self.dummy_project
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.client.logout()
-        self.client.session.auth = HTTPBasicAuth('test1', 'test1test1')
         self.client.login(username="test1", password="test1test1")
         url = reverse('view_user_projects', kwargs={'username': 'test1'})
         response = self.client.get(url)
@@ -201,18 +198,14 @@ class DocTypeViewListTest(BaseViewTest):
 
 class DocTypeTest(BaseViewTest):
     
-    def generate_id():
-        for i in range(3):
-            yield i+1
-    
-    generator = generate_id()
+
     def setUp(self):
         super().setUp()
         data = self.dummy_doctype
         self.client.login(username="test1", password="test1test1")
         self.url = reverse('checkout_all_doc_type')
-        self.client.post(self.url, json.dumps(data),content_type="application/json")
-        self.did = next(self.generator)
+        response = self.client.post(self.url, json.dumps(data),content_type="application/json")
+        self.did = response.data['id']
         self.url = reverse('checkout_doc_type', kwargs={'did' : self.did})
     
     def test_get_doc_type(self):
@@ -268,32 +261,27 @@ class DocumentListTest(BaseViewTest):
 
 class DocumentTest(BaseViewTest):
 
-    def generate_id():
-        for i in range(3):
-            yield i+1
-
-    generator = generate_id()
-
     def setUp(self):
         super().setUp()
         self.client.login(username="test1", password="test1test1")
         self.username = "test1"
         self.project_slug = "test-project-some"
         self.docid = 1
-        self.id = next(self.generator)
         # Project setup
         url = reverse('view_user_projects', kwargs={'username': 'test1'})
         data = self.dummy_project
         response = self.client.post(url, data=json.dumps(data), content_type="application/json")
+        self.pid = response.data['id']
         # Doctype Setup
         url = reverse('checkout_all_doc_type')
         self.client.post(url, data=json.dumps(data), content_type="application/json")
         data = self.dummy_doctype
         response = self.client.post(url, json.dumps(data), content_type="application/json")
+        self.template_link = response.data["id"]
         #Document Setup
         data = self.dummy_document
-        data['project_id'] = self.id + 1
-        data['template_link'] = self.id + 5
+        data['project_id'] = self.pid
+        data['template_link'] = self.template_link
         url = reverse('documents_list', kwargs={'username': self.username, 'project_slug': self.project_slug})
         resp = self.client.post(url, data=json.dumps(data), content_type="application/json")
         ## URL
