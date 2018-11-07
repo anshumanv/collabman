@@ -121,9 +121,9 @@ class DocumentCard extends React.Component {
   };
 
   handleFormUpdates = (event, input) => {
-    if (event.target.id === 'task-title')
+    if (event.target.id === 'document-title')
       this.setState({ [input]: event.target.value });
-    else if (event.target.id === 'task-content')
+    else if (event.target.id === 'document-content')
       this.setState({ [input]: event.target.value });
   };
 
@@ -155,7 +155,7 @@ class DocumentCard extends React.Component {
   };
 
   render() {
-    const { classes, docs } = this.props;
+    const { classes, docs, profile, currentProject } = this.props;
     const { value } = this.state;
     const docsObj = {};
     if (docs.docs) {
@@ -209,7 +209,7 @@ class DocumentCard extends React.Component {
                 <TextField
                   autoFocus
                   margin="dense"
-                  id="task-title"
+                  id="document-title"
                   onChange={e => this.handleFormUpdates(e, 'docTitle')}
                   label="Document Title"
                   type="text"
@@ -217,7 +217,7 @@ class DocumentCard extends React.Component {
                 />
                 <TextField
                   margin="dense"
-                  id="task-content"
+                  id="document-content"
                   onChange={e => this.handleFormUpdates(e, 'docLink')}
                   label="Document Link"
                   type="text"
@@ -275,16 +275,22 @@ class DocumentCard extends React.Component {
                           </a>
                         }
                       />
-                      <ListItemSecondaryAction>
-                        <IconButton
-                          aria-label="Delete"
-                          onClick={() =>
-                            this.deleteDocConfirmation(somedoc.document_id)
-                          }
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </ListItemSecondaryAction>
+                      {currentProject &&
+                        profile &&
+                        (currentProject.project_manager === profile.id ? (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              aria-label="Delete"
+                              onClick={() =>
+                                this.deleteDocConfirmation(somedoc.document_id)
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        ) : (
+                          ''
+                        ))}
                     </ListItem>
                   ))
                 ) : (
@@ -305,11 +311,15 @@ DocumentCard.propTypes = {
   deleteDocument: PropTypes.func,
   postDocument: PropTypes.func,
   fetchProjectDocs: PropTypes.func,
+  currentProject: PropTypes.obj,
+  profile: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     docs: state.documents,
+    currentProject: state.projects.currentProject,
+    profile: state.auth.profile,
   };
 };
 
