@@ -73,18 +73,33 @@ npm i && npm start
 
 ## Testing
 
-1. Setup testing enviroment
-    ```sh
-    sudo -su postgres
-    psql
-    ALTER USER test CREATEDB;
-    \q
-    exit
-    ```
-2. Testing
-    ```sh
-        python manage.py test
-    ```
+
+### Backend
+
+1. Make sure you have a local db instance created during setting up local development, make sure your user has the permissions to create databases.
+
+```sh
+sudo -su postgres
+psql
+ALTER USER <username> CREATEDB;
+\q
+exit
+```
+
+
+2. Creating a test db and running tests.
+```sh
+python manage.py test
+```
+
+### Frontend
+
+1. Install dependencies and run tests
+
+```sh
+cd frontend
+npm i && npm test
+```
 
 
 ## Deployment
