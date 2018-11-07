@@ -39,9 +39,9 @@ ReactDOM.render(
           <Route
             exact
             path="/dashboard"
-            render={() => {
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <Dashboard />;
+                return <Dashboard {...props} />;
               } else {
                 return <NotFound />;
               }
@@ -49,10 +49,10 @@ ReactDOM.render(
           />
           <Route
             exact
-            path="/profile/:username"
-            render={() => {
+            path="/profile/"
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <Profile />;
+                return <Profile {...props} />;
               } else {
                 return <NotFound />;
               }

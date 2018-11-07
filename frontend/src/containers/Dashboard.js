@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // Components
 import Contributions from '../components/Contributions';
@@ -80,6 +81,7 @@ class Dashboard extends Component {
     // this.props.fetchContributors();
   }
 
+  // I did not write any of these lame functions ~anshumanv
   handleChange = event => {
     this.setState({ auth: event.target.checked });
   };
@@ -90,7 +92,7 @@ class Dashboard extends Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-    window.location = '/profile/<username>';
+    this.props.history.push('/profile');
   };
 
   handleLogout = () => {
@@ -105,7 +107,7 @@ class Dashboard extends Component {
         localStorage.removeItem('access_token');
         localStorage.removeItem('username');
         console.log(res);
-        window.location = '/';
+        this.props.history.push('/');
       });
   };
 
@@ -150,7 +152,7 @@ class Dashboard extends Component {
                     horizontal: 'right',
                   }}
                   open={open}
-                  onClose={this.handleClose}
+                  onClose={() => this.setState({ anchorEl: null })}
                 >
                   <MenuItem onClick={this.handleClose}>Profile</MenuItem>
                   <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
@@ -184,14 +186,16 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
-  currentProject: PropTypes.object,
+  currentProject: PropTypes.func,
   saveAuth: PropTypes.func,
-  history: PropTypes.func,
+  history: PropTypes.obj,
+  auth: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     currentProject: state.projects.currentProject,
+    auth: state.auth,
   };
 };
 
