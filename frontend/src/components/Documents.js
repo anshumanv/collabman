@@ -265,7 +265,15 @@ class DocumentCard extends React.Component {
                       </ListItemAvatar>
                       <ListItemText
                         primary={somedoc.document_title}
-                        secondary={somedoc.document_id}
+                        secondary={
+                          <a
+                            style={{ textDecoration: 'none' }}
+                            target="_blank"
+                            href={somedoc.document_link}
+                          >
+                            {`Open`}
+                          </a>
+                        }
                       />
                       <ListItemSecondaryAction>
                         <IconButton
