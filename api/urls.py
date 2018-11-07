@@ -36,6 +36,6 @@ urlpatterns = [
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/",TaskView.as_view(), name='task_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/",SubtaskListView.as_view(), name='subtask_list_view'),
     path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/", SubtaskView.as_view(), name='subtask_view'),
-    path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/", SubtaskLogListView.as_view(), name='subtask_view'),
-    path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/<int:sublogid>",SubtaskLogView.as_view(), name='subtask_view'),
+    path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/", SubtaskLogListView.as_view(), name='sublogList_view'),
+    path("<str:username>/project/<str:project_slug>/task/<int:tid>/subtask/<int:subid>/sublog/<int:sublogid>",SubtaskLogView.as_view(), name='sublog_view'),
 ]  
