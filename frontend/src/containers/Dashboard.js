@@ -30,6 +30,7 @@ import Divider from '@material-ui/core/Divider';
 import { getUserProjects } from '../actions/projectActions';
 import { fetchContributors } from '../actions/statsActions';
 import { authSuccess } from '../actions/authActions';
+import { fetchUserProfile } from '../actions/profileActions';
 
 import { API_URL } from '../constants';
 
@@ -77,8 +78,11 @@ class Dashboard extends Component {
         localStorage.getItem('access_token'),
         localStorage.getItem('username'),
       );
+    } else {
+      this.props.history.push('/');
     }
     this.props.getUserProjects();
+    this.props.fetchProfile();
     // this.props.fetchContributors();
   }
 
@@ -191,6 +195,7 @@ Dashboard.propTypes = {
   saveAuth: PropTypes.func,
   history: PropTypes.obj,
   auth: PropTypes.obj,
+  fetchProfile: PropTypes.func,
 };
 
 const mapStateToProps = state => {
@@ -210,6 +215,9 @@ const mapDispatchToProps = dispatch => {
     },
     saveAuth: (token, username) => {
       dispatch(authSuccess(token, username));
+    },
+    fetchProfile: () => {
+      dispatch(fetchUserProfile());
     },
   };
 };

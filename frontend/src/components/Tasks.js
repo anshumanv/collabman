@@ -113,7 +113,7 @@ class TasksCard extends Component {
   };
 
   render() {
-    const { classes, tasks } = this.props;
+    const { classes, tasks, currentProject, profile } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
     let tasksList = [];
     if (tasks) {
@@ -148,16 +148,22 @@ class TasksCard extends Component {
                       <SendIcon />
                     </ListItemIcon>
                     <ListItemText inset primary={task.task_description} />
-                    <ListItemSecondaryAction>
-                      <IconButton
-                        aria-label="Delete"
-                        onClick={() =>
-                          this.deleteTaskConfirmation(task.task_id)
-                        }
-                      >
-                        <DeleteIcon />
-                      </IconButton>
-                    </ListItemSecondaryAction>
+                    {currentProject &&
+                      profile &&
+                      (currentProject.project_manager === profile.id ? (
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            aria-label="Delete"
+                            onClick={() =>
+                              this.deleteTaskConfirmation(task.task_id)
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      ) : (
+                        ''
+                      ))}
                   </ListItem>
                 ))}
               </List>
@@ -212,11 +218,15 @@ TasksCard.propTypes = {
   tasks: PropTypes.object,
   submitTask: PropTypes.func,
   deleteTask: PropTypes.func,
+  currentProject: PropTypes.obj,
+  profile: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     tasks: state.tasks,
+    currentProject: state.projects.currentProject,
+    profile: state.auth.profile,
   };
 };
 
