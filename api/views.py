@@ -109,9 +109,9 @@ class ProjectList(APIView):
         data = request.data
         members_pid = []
         project_members = data['users']
+        data['project_manager'] = user_profile.id
         for member in project_members:
             members_pid.append(get_profile_id(username=member))
-        data['project_manager'] = get_profile_id(data['project_manager'])
         if data['project_manager'] not in members_pid:
             members_pid.append(data['project_manager'])
         data['users'] = members_pid
@@ -145,6 +145,8 @@ class ProjectView(APIView):
             for member in project_members:
                 members_pid.append(get_profile_id(username=member))
             data['users'] = members_pid
+            if project.project_manager.id not in data['users']:
+                return Response({"error" : "Cannot remove project manager from project members"}, status=status.HTTP_400_BAD_REQUEST)
             data['project_manager'] = get_profile_id(data['project_manager'])
             serializer = ProjectSerializer(project, data=data)
             if serializer.is_valid():

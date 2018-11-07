@@ -56,6 +56,21 @@ cd frontend/
 npm i && npm start
 ```
 
+## Testing
+
+1. Setup testing enviroment
+    ```sh
+    sudo -su postgres
+    psql
+    ALTER USER test CREATEDB;
+    \q
+    exit
+    ```
+2. Testing
+    ```sh
+        python manage.py test
+    ```
+
 
 ## Deploy
 
