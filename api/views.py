@@ -44,7 +44,7 @@ class ProfileAPIView(APIView):
         serialize = ProfileSerializer(user_profile, data=request.data)
         if serialize.is_valid():
             serialize.save()
-            Response(status=201)
+            Response(status=200)
         return Response(status=404)
     
     def delete(self, request, username):
@@ -52,7 +52,7 @@ class ProfileAPIView(APIView):
         user_profile = get_object_or_404(Profile, user=user)
         user_profile.delete()
         user.delete()
-        return Response(status=204)
+        return Response(status=200)
 
 
 class LoginView(generics.GenericAPIView):
@@ -105,10 +105,16 @@ class ProjectList(APIView):
     
     def post(self, request, username):
         user = get_object_or_404(User, username=username)
-        pid = get_object_or_404(Profile, user=user).id
-        request.data['project_manager'] = pid
-        if pid not in request.data['users']:
-            request.data['users'].append(pid)
+        user_profile = get_object_or_404(Profile, user=user)
+        data = request.data
+        members_pid = []
+        project_members = data['users']
+        for member in project_members:
+            members_pid.append(get_profile_id(username=member))
+        data['project_manager'] = get_profile_id(data['project_manager'])
+        if data['project_manager'] not in members_pid:
+            members_pid.append(data['project_manager'])
+        data['users'] = members_pid
         serialize = ProjectSerializer(data = request.data)
         if serialize.is_valid():
             serialize.save()
