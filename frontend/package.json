@@ -1,5 +1,5 @@
 {
-  "name": "frontend",
+  "name": "collabman-frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -109,11 +109,14 @@
     "extends": "react-app"
   },
   "devDependencies": {
+    "enzyme": "^3.7.0",
+    "enzyme-adapter-react-16": "^1.6.0",
     "eslint-config-prettier": "^3.1.0",
     "eslint-plugin-prettier": "^3.0.0",
     "husky": "^1.1.2",
     "lint-staged": "^7.3.0",
     "prettier": "^1.14.3",
+    "react-test-renderer": "^16.6.1",
     "webpack-bundle-tracker": "^0.3.0"
   },
   "lint-staged": {
