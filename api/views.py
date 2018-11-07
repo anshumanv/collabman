@@ -208,8 +208,9 @@ class DocumentListView(APIView):
         user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try :
-            user_profile = project.users.get(id=user_profile.id)
-            documents = project.document_set.all()
+            documents = Document.objects.filter(project_id=project.id)
+            # user_profile = project.users.get(id=user_profile.id)
+            # documents = project.document_set.all()
             serialize = DocumentSerializer(documents, many=True)
             return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
@@ -283,6 +284,8 @@ class DocumentView(APIView):
         project = get_object_or_404(Project, slug=project_slug)
         try:
             user_profile = project.users.get(id=user_profile.id)
+            if user.id != project.project_manager_id:
+                raise PermissionDenied
             pid = project.id
             document = get_object_or_404(Document, project_id=pid, document_id=docid)
             document.delete()
@@ -300,8 +303,7 @@ class TaskListView(APIView):
         user_profile = get_object_or_404(Profile, user=user)
         project = get_object_or_404(Project, slug=project_slug)
         try:
-            user = project.users.get(id=user_profile.id)
-            tasks = project.task_set.all()
+            tasks = Task.objects.filter(project_id=project.id)
             serialize = TaskSerializer(tasks, many=True)
             return Response(serialize.data, status=200)
         except Profile.DoesNotExist:
