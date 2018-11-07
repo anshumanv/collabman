@@ -29,9 +29,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Some actions
 import {
@@ -42,10 +40,6 @@ import {
 
 // Some icons :)
 import { FaNewspaper } from 'react-icons/fa';
-
-const ITEM_HEIGHT = 48;
-
-const options = ['Edit', 'Delete'];
 
 function TabContainer(props) {
   return (
@@ -101,25 +95,6 @@ class DocumentCard extends React.Component {
     docTitle: '',
     docLink: '',
     newDocDialog: false,
-    whichOptionSelected: null,
-  };
-
-  handleMenuClick = event => {
-    this.setState({ whichOptionSelected: event.currentTarget });
-  };
-
-  handleMenuClose = () => {
-    this.setState({ whichOptionSelected: null });
-  };
-
-  handleOptionChosen = (event, index, docId) => {
-    this.setState({ whichOptionSelected: null });
-    if (index === 1) {
-      this.deleteDocConfirmation(docId);
-    }
-    if (index === 0) {
-      this.setState({ open: true });
-    }
   };
 
   handleOpen = () => {
@@ -178,8 +153,6 @@ class DocumentCard extends React.Component {
 
   render() {
     const { classes, docs } = this.props;
-    const { whichOptionSelected } = this.state;
-    const isMenuOpen = Boolean(whichOptionSelected);
     const { value } = this.state;
     const docsObj = {};
     if (docs.docs) {
@@ -291,44 +264,14 @@ class DocumentCard extends React.Component {
                         secondary={somedoc.document_id}
                       />
                       <ListItemSecondaryAction>
-                        <div>
-                          <IconButton
-                            aria-label="More"
-                            aria-owns={isMenuOpen ? 'long-menu' : undefined}
-                            aria-haspopup="true"
-                            onClick={this.handleMenuClick}
-                          >
-                            <MoreVertIcon />
-                          </IconButton>
-                          <Menu
-                            id="long-menu"
-                            anchorEl={whichMenuSelected}
-                            open={isMenuOpen}
-                            onClose={this.handleMenuClose}
-                            PaperProps={{
-                              style: {
-                                maxHeight: ITEM_HEIGHT * 4.5,
-                                width: 200,
-                              },
-                            }}
-                          >
-                            {options.map((option, index) => (
-                              <MenuItem
-                                key={option}
-                                selected={option === 'Edit'}
-                                onClick={event =>
-                                  this.handleOptionChosen(
-                                    event,
-                                    index,
-                                    somedoc.document_id,
-                                  )
-                                }
-                              >
-                                {option}
-                              </MenuItem>
-                            ))}
-                          </Menu>
-                        </div>
+                        <IconButton
+                          aria-label="Delete"
+                          onClick={() =>
+                            this.deleteDocConfirmation(somedoc.document_id)
+                          }
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </ListItemSecondaryAction>
                     </ListItem>
                   ))
