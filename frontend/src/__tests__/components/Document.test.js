@@ -1,25 +1,23 @@
 import React from 'react';
+import Documents from '../../components/Documents';
 import Enzyme, { shallow, render } from 'enzyme';
 import ReactDOM from 'react-dom';
 import Adapter from 'enzyme-adapter-react-16';
-
-import NotFound from '../../containers/NotFound';
-
 import { getStore } from '../../store';
 
 Enzyme.configure({ adapter: new Adapter() });
 
-// Mock redux store for component
-const store = getStore();
+describe('<Documents />', () => {
+  // Pass the redux store
+  const store = getStore();
 
-describe('<NotFound />', () => {
   it('renders without crashing', () => {
+    const div = document.createElement('div');
     // DOM Rendering
-    // const div = document.createElement('div');
-    // ReactDOM.render(<NotFound store={store} />, div);
+    // ReactDOM.render(<Documents store={store} />, div);
     // ReactDOM.unmountComponentAtNode(div);
 
     // Shallow Rendering
-    shallow(<NotFound store={store} />);
+    shallow(<Documents store={store} />);
   });
 });

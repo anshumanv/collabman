@@ -32,6 +32,9 @@ export default class Redirect extends React.Component {
         } else {
           this.setState({ isTokenRecieved: true });
         }
+      })
+      .catch(err => {
+        console.log(err);
       });
     // console.log(
     //   process.env.REACT_APP_SLACK_CLIENT_ID,
@@ -45,11 +48,15 @@ export default class Redirect extends React.Component {
 
   handleNewUserMessage(newMessage) {
     // console.log(`New message incoming! ${newMessage}`);
-    axios.post(
-      `https://slack.com/api/chat.postMessage?token=${
-        this.state.token
-      }&channel=CDL733HC4&text=${newMessage}`,
-    );
+    axios
+      .post(
+        `https://slack.com/api/chat.postMessage?token=${
+          this.state.token
+        }&channel=CDL733HC4&text=${newMessage}`,
+      )
+      .catch(err => {
+        console.log(err);
+      });
     // .then(message => console.log(message));
   }
 
@@ -72,6 +79,9 @@ export default class Redirect extends React.Component {
             response.data.messages[response.data.messages.length - 1 - message]
               .text,
           );
+      })
+      .catch(err => {
+        console.log(err);
       });
     if (!this.state.isTokenRecieved)
       return (

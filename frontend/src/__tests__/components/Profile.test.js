@@ -1,17 +1,21 @@
 import React from 'react';
-import Profile from '../../containers/Profile';
 import Enzyme, { shallow, render } from 'enzyme';
 import ReactDOM from 'react-dom';
 import Adapter from 'enzyme-adapter-react-16';
+
+import Profile from '../../containers/Profile';
+
 import { getStore } from '../../store';
 
 Enzyme.configure({ adapter: new Adapter() });
 
+// Mock redux store
+const store = getStore();
+
 describe('<Profile />', () => {
-  const store = getStore();
   it('renders without crashing', () => {
-    const div = document.createElement('div');
     // DOM Rendering
+    // const div = document.createElement('div');
     // ReactDOM.render(<Profile store={store} />, div);
     // ReactDOM.unmountComponentAtNode(div);
 
