@@ -68,8 +68,8 @@ export const createNewProject = payload => {
         window.location('/dashboard');
       })
       .catch(err => {
-        console.log(err.response.request.response);
-        dispatch(projectsCreationFailed(err.response.request.responseText));
+        console.log(err.request.response.response);
+        dispatch(projectsCreationFailed(err.request.response.responseText));
       });
   };
 };
