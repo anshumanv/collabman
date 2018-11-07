@@ -10,10 +10,8 @@ import NotFound from './containers/NotFound';
 import NewProject from './containers/NewProject';
 import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
-import Auth from './containers/Auth';
 import AuthComplete from './containers/AuthComplete';
 
-import './styles/index.css';
 import registerServiceWorker from './registerServiceWorker';
 
 // Redux Store
