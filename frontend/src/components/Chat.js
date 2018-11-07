@@ -8,6 +8,7 @@ export default class Redirect extends React.Component {
     this.state = {
       isTokenRecieved: false,
       token: '',
+      generalChannelID: '',
     };
     this.handleNewUserMessage = this.handleNewUserMessage.bind(this);
   }
@@ -31,6 +32,15 @@ export default class Redirect extends React.Component {
           // console.log('not now');
         } else {
           this.setState({ isTokenRecieved: true });
+          axios
+            .get(
+              `https://slack.com/api/channels.list?token=${
+                response.data.access_token
+              }`,
+            )
+            .then(res => {
+              this.setState({ generalChannelID: res.data.channels[0].id });
+            });
         }
       });
     // console.log(
@@ -48,7 +58,7 @@ export default class Redirect extends React.Component {
     axios.post(
       `https://slack.com/api/chat.postMessage?token=${
         this.state.token
-      }&channel=CDL733HC4&text=${newMessage}`,
+      }&channel=${this.state.generalChannelID}&text=${newMessage}`,
     );
     // .then(message => console.log(message));
   }
@@ -63,7 +73,7 @@ export default class Redirect extends React.Component {
       .get(
         `https://slack.com/api/conversations.history?token=${
           this.state.token
-        }&channel=CDL733HC4`,
+        }&channel=${this.state.generalChannelID}`,
       )
       .then(response => {
         // console.log(response, response.data.messages);
