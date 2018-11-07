@@ -46,6 +46,8 @@ class NewProjectForm extends Component {
     classes: PropTypes.object.isRequired,
     submitNewProject: PropTypes.func,
     errors: PropTypes.string,
+    success: PropTypes.bool,
+    history: PropTypes.func,
   };
 
   submitProject = e => {
@@ -70,8 +72,11 @@ class NewProjectForm extends Component {
   };
 
   render() {
-    const { classes, errors } = this.props;
+    const { classes, errors, success } = this.props;
     const { showAlert } = this.state;
+    if (success) {
+      this.props.history.push('/dashboard');
+    }
     return (
       <div>
         <form action="" className={classes.form} onSubmit={this.submitProject}>
@@ -139,6 +144,7 @@ class NewProjectForm extends Component {
 const mapStateToProps = state => {
   return {
     errors: state.projects.creationError,
+    success: state.projects.success,
   };
 };
 

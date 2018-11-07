@@ -23,7 +23,7 @@ class NewProject extends Component {
     const { classes } = this.props;
     return (
       <div className={classes.container}>
-        <NewProjectForm />
+        <NewProjectForm {...this.props} />
       </div>
     );
   }

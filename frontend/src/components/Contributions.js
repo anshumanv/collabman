@@ -73,7 +73,7 @@ class Contributions extends Component {
           <Typography className={classes.title} color="textSecondary">
             Contributions
           </Typography>
-          {this.props.contributorsFetched ? (
+          {this.props.contributorsFetched && this.props.currentProject ? (
             this.props.contributors.length ? (
               <div>
                 <div>

@@ -28,9 +28,9 @@ ReactDOM.render(
           <Route
             exact
             path="/new"
-            render={() => {
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <NewProject />;
+                return <NewProject {...props} />;
               } else {
                 return <NotFound />;
               }
