@@ -39,7 +39,7 @@ class NewProjectForm extends Component {
   state = {
     projectName: '',
     repoLink: '',
-    projectMembers: [],
+    projectMembers: '',
     showAlert: false,
   };
   static propTypes = {
@@ -101,7 +101,7 @@ class NewProjectForm extends Component {
           <TextField
             id="project-members"
             label="Team Members"
-            placeholder="Team Emails"
+            placeholder="Usernames (separated by comma)"
             type="text"
             className={classes.textField}
             onChange={e => this.handleFormUpdates(e, 'projectMembers')}
