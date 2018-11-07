@@ -107,11 +107,6 @@ class ProjectList(APIView):
         user = get_object_or_404(User, username=username)
         pid = get_object_or_404(Profile, user=user).id
         request.data['project_manager'] = pid
-        project_members = request.data['users']
-        members_pid = []
-        for member in project_members:
-            members_pid.append(get_profile_id(username=member))
-        request.data['users'] = members_pid
         if pid not in request.data['users']:
             request.data['users'].append(pid)
         serialize = ProjectSerializer(data = request.data)
