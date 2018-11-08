@@ -11,11 +11,10 @@ from rest_framework.authtoken.models import Token
 
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
-    if created:
-        if len(Token.objects.filter(user=instance)) == 0:
-            Token.objects.create(user=instance)
-        if len(Profile.objects.filter(user=instance)) == 0:
-            Profile.objects.create(user=instance)
+    if len(Token.objects.filter(user=instance)) == 0:
+        Token.objects.create(user=instance)
+    if len(Profile.objects.filter(user=instance)) == 0:
+        Profile.objects.create(user=instance)
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
