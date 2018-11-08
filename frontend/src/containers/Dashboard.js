@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 // Components
 import Contributions from '../components/Contributions';
@@ -28,6 +29,7 @@ import Divider from '@material-ui/core/Divider';
 import { getUserProjects } from '../actions/projectActions';
 import { fetchContributors } from '../actions/statsActions';
 import { authSuccess } from '../actions/authActions';
+import { fetchUserProfile } from '../actions/profileActions';
 
 import { API_URL } from '../constants';
 
@@ -75,11 +77,15 @@ class Dashboard extends Component {
         localStorage.getItem('access_token'),
         localStorage.getItem('username'),
       );
+    } else {
+      this.props.history.push('/');
     }
     this.props.getUserProjects();
+    this.props.fetchProfile();
     // this.props.fetchContributors();
   }
 
+  // I did not write any of these lame functions ~anshumanv
   handleChange = event => {
     this.setState({ auth: event.target.checked });
   };
@@ -90,7 +96,7 @@ class Dashboard extends Component {
 
   handleClose = () => {
     this.setState({ anchorEl: null });
-    window.location = '/profile/<username>';
+    this.props.history.push('/profile');
   };
 
   handleLogout = () => {
@@ -105,7 +111,7 @@ class Dashboard extends Component {
         localStorage.removeItem('access_token');
         localStorage.removeItem('username');
         console.log(res);
-        window.location = '/';
+        this.props.history.push('/');
       });
   };
 
@@ -150,7 +156,7 @@ class Dashboard extends Component {
                     horizontal: 'right',
                   }}
                   open={open}
-                  onClose={this.handleClose}
+                  onClose={() => this.setState({ anchorEl: null })}
                 >
                   <MenuItem onClick={this.handleClose}>Profile</MenuItem>
                   <MenuItem onClick={this.handleLogout}>Logout</MenuItem>
@@ -184,14 +190,17 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
   getUserProjects: PropTypes.func,
   fetchContributors: PropTypes.func,
-  currentProject: PropTypes.object,
+  currentProject: PropTypes.func,
   saveAuth: PropTypes.func,
-  history: PropTypes.func,
+  history: PropTypes.obj,
+  auth: PropTypes.obj,
+  fetchProfile: PropTypes.func,
 };
 
 const mapStateToProps = state => {
   return {
     currentProject: state.projects.currentProject,
+    auth: state.auth,
   };
 };
 
@@ -205,6 +214,9 @@ const mapDispatchToProps = dispatch => {
     },
     saveAuth: (token, username) => {
       dispatch(authSuccess(token, username));
+    },
+    fetchProfile: () => {
+      dispatch(fetchUserProfile());
     },
   };
 };

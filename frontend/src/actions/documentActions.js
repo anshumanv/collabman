@@ -84,7 +84,7 @@ export const deleteSelectedDoc = docId => {
         dispatch(fetchDocuments(username, projectSlug, token)); // gommenasai
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response.request.responseText);
         dispatch(docDeletionFailed());
       });
   };

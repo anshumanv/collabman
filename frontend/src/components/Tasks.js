@@ -21,9 +21,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Actions
 import {
@@ -101,7 +99,7 @@ class TasksCard extends Component {
   };
 
   submitNewTask = event => {
-    event.preventDefault();
+    event.preventDefault(); // good
     const newTaskPayload = {
       task_title: this.state.taskTitle,
       task_description: this.state.taskDescription,
@@ -129,9 +127,7 @@ class TasksCard extends Component {
   };
 
   render() {
-    const { whichMenuSelected } = this.state;
-    const isMenuOpen = Boolean(whichMenuSelected);
-    const { classes, tasks } = this.props;
+    const { classes, tasks, currentProject, profile } = this.props;
     const bull = <span className={classes.bullet}>•</span>;
     let tasksList = [];
     if (tasks) {
@@ -165,43 +161,27 @@ class TasksCard extends Component {
                     <ListItemIcon>
                       <SendIcon />
                     </ListItemIcon>
-                    <ListItemText inset primary={task.task_description} />
-                    <ListItemSecondaryAction>
-                      <div>
-                        <IconButton
-                          aria-label="More"
-                          aria-owns={isMenuOpen ? 'long-menu' : undefined}
-                          aria-haspopup="true"
-                          onClick={this.handleMenuClick}
-                        >
-                          <MoreVertIcon />
-                        </IconButton>
-                        <Menu
-                          id="long-menu"
-                          anchorEl={whichMenuSelected}
-                          open={isMenuOpen}
-                          onClose={this.handleMenuClose}
-                          PaperProps={{
-                            style: {
-                              maxHeight: ITEM_HEIGHT * 4.5,
-                              width: 200,
-                            },
-                          }}
-                        >
-                          {options.map((option, index) => (
-                            <MenuItem
-                              key={option}
-                              selected={option === 'Edit'}
-                              onClick={event =>
-                                this.handleOptionChosen(event, index, task.id)
-                              }
-                            >
-                              {option}
-                            </MenuItem>
-                          ))}
-                        </Menu>
-                      </div>
-                    </ListItemSecondaryAction>
+                    <ListItemText
+                      inset
+                      primary={task.task_title}
+                      secondary={task.task_description}
+                    />
+                    {currentProject &&
+                      profile &&
+                      (currentProject.project_manager === profile.id ? (
+                        <ListItemSecondaryAction>
+                          <IconButton
+                            aria-label="Delete"
+                            onClick={() =>
+                              this.deleteTaskConfirmation(task.task_id)
+                            }
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemSecondaryAction>
+                      ) : (
+                        ''
+                      ))}
                   </ListItem>
                 ))}
               </List>
@@ -260,11 +240,15 @@ TasksCard.propTypes = {
   tasks: PropTypes.object,
   submitTask: PropTypes.func,
   deleteTask: PropTypes.func,
+  currentProject: PropTypes.obj,
+  profile: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     tasks: state.tasks,
+    currentProject: state.projects.currentProject,
+    profile: state.auth.profile,
   };
 };
 

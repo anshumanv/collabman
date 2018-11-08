@@ -6,7 +6,7 @@ from rest_framework.authtoken.models import Token
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('username', 'email', 'first_name', 'last_name')
     
     def create(self, validated_data):
         user = User(
@@ -18,9 +18,10 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(required=True)
     class Meta:
         model = Profile
-        fields = '__all__'
+        fields = ('id', 'bio', 'location', 'birth_date', 'user')
 
 class ProjectSerializer(serializers.ModelSerializer):
     class Meta:

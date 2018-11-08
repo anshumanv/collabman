@@ -29,9 +29,7 @@ import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import TextField from '@material-ui/core/TextField';
 import DialogContentText from '@material-ui/core/DialogContentText';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 // Some actions
 import {
@@ -143,9 +141,9 @@ class DocumentCard extends React.Component {
   };
 
   handleFormUpdates = (event, input) => {
-    if (event.target.id === 'task-title')
+    if (event.target.id === 'document-title')
       this.setState({ [input]: event.target.value });
-    else if (event.target.id === 'task-content')
+    else if (event.target.id === 'document-content')
       this.setState({ [input]: event.target.value });
   };
 
@@ -177,9 +175,7 @@ class DocumentCard extends React.Component {
   };
 
   render() {
-    const { classes, docs } = this.props;
-    const { whichOptionSelected } = this.state;
-    const isMenuOpen = Boolean(whichOptionSelected);
+    const { classes, docs, profile, currentProject } = this.props;
     const { value } = this.state;
     const docsObj = {};
     if (docs.docs) {
@@ -230,33 +226,23 @@ class DocumentCard extends React.Component {
                 <DialogContentText>
                   Please enter the document details
                 </DialogContentText>
-                <form onSubmit={value => this.postNewDocument(value)}>
-                  <TextField
-                    autoFocus
-                    required
-                    margin="dense"
-                    id="task-title"
-                    onChange={e => this.handleFormUpdates(e, 'docTitle')}
-                    label="Document Title"
-                    type="text"
-                    fullWidth
-                  />
-                  <TextField
-                    required
-                    margin="dense"
-                    id="task-content"
-                    onChange={e => this.handleFormUpdates(e, 'docLink')}
-                    label="Document Link"
-                    type="text"
-                    fullWidth
-                  />
-                  <Button onClick={this.closeNewDocDialog} color="primary">
-                    Cancel
-                  </Button>
-                  <Button type="submit" color="primary">
-                    Submit
-                  </Button>
-                </form>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="document-title"
+                  onChange={e => this.handleFormUpdates(e, 'docTitle')}
+                  label="Document Title"
+                  type="text"
+                  fullWidth
+                />
+                <TextField
+                  margin="dense"
+                  id="document-content"
+                  onChange={e => this.handleFormUpdates(e, 'docLink')}
+                  label="Document Link"
+                  type="text"
+                  fullWidth
+                />
               </DialogContent>
             </Dialog>
           </div>
@@ -288,48 +274,32 @@ class DocumentCard extends React.Component {
                       </ListItemAvatar>
                       <ListItemText
                         primary={somedoc.document_title}
-                        secondary={somedoc.document_id}
+                        secondary={
+                          <a
+                            style={{ textDecoration: 'none' }}
+                            target="_blank"
+                            href={somedoc.document_link}
+                          >
+                            {`Open`}
+                          </a>
+                        }
                       />
-                      <ListItemSecondaryAction>
-                        <div>
-                          <IconButton
-                            aria-label="More"
-                            aria-owns={isMenuOpen ? 'long-menu' : undefined}
-                            aria-haspopup="true"
-                            onClick={this.handleMenuClick}
-                          >
-                            <MoreVertIcon />
-                          </IconButton>
-                          <Menu
-                            id="long-menu"
-                            anchorEl={whichMenuSelected}
-                            open={isMenuOpen}
-                            onClose={this.handleMenuClose}
-                            PaperProps={{
-                              style: {
-                                maxHeight: ITEM_HEIGHT * 4.5,
-                                width: 200,
-                              },
-                            }}
-                          >
-                            {options.map((option, index) => (
-                              <MenuItem
-                                key={option}
-                                selected={option === 'Edit'}
-                                onClick={event =>
-                                  this.handleOptionChosen(
-                                    event,
-                                    index,
-                                    somedoc.document_id,
-                                  )
-                                }
-                              >
-                                {option}
-                              </MenuItem>
-                            ))}
-                          </Menu>
-                        </div>
-                      </ListItemSecondaryAction>
+                      {currentProject &&
+                        profile &&
+                        (currentProject.project_manager === profile.id ? (
+                          <ListItemSecondaryAction>
+                            <IconButton
+                              aria-label="Delete"
+                              onClick={() =>
+                                this.deleteDocConfirmation(somedoc.document_id)
+                              }
+                            >
+                              <DeleteIcon />
+                            </IconButton>
+                          </ListItemSecondaryAction>
+                        ) : (
+                          ''
+                        ))}
                     </ListItem>
                   ))
                 ) : (
@@ -350,11 +320,15 @@ DocumentCard.propTypes = {
   deleteDocument: PropTypes.func,
   postDocument: PropTypes.func,
   fetchProjectDocs: PropTypes.func,
+  currentProject: PropTypes.obj,
+  profile: PropTypes.obj,
 };
 
 const mapStateToProps = state => {
   return {
     docs: state.documents,
+    currentProject: state.projects.currentProject,
+    profile: state.auth.profile,
   };
 };
 

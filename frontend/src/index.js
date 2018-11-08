@@ -10,10 +10,10 @@ import NotFound from './containers/NotFound';
 import NewProject from './containers/NewProject';
 import Dashboard from './containers/Dashboard';
 import Profile from './containers/Profile';
-import Auth from './containers/Auth';
 import AuthComplete from './containers/AuthComplete';
 
 import './styles/index.css';
+
 import registerServiceWorker from './registerServiceWorker';
 
 // Redux Store
@@ -28,9 +28,9 @@ ReactDOM.render(
           <Route
             exact
             path="/new"
-            render={() => {
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <NewProject />;
+                return <NewProject {...props} />;
               } else {
                 return <NotFound />;
               }
@@ -39,9 +39,9 @@ ReactDOM.render(
           <Route
             exact
             path="/dashboard"
-            render={() => {
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <Dashboard />;
+                return <Dashboard {...props} />;
               } else {
                 return <NotFound />;
               }
@@ -49,10 +49,10 @@ ReactDOM.render(
           />
           <Route
             exact
-            path="/profile/:username"
-            render={() => {
+            path="/profile/"
+            render={props => {
               if (localStorage.getItem('access_token')) {
-                return <Profile />;
+                return <Profile {...props} />;
               } else {
                 return <NotFound />;
               }

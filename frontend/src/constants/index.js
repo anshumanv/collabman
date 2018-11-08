@@ -46,3 +46,8 @@ export const authActions = {
   AUTH_SUCCESS: 'AUTH_SUCCESS',
   AUTH_FAILURE: 'AUTH_FAILURE',
 };
+
+export const profileActions = {
+  PROFILE_FETCH_SUCCESS: 'PROFILE_FETCH_SUCCESS',
+  PROFILE_FETCH_FAILURE: 'PROFILE_FETCH_FAILURE',
+};

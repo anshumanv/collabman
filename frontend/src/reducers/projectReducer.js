@@ -7,6 +7,7 @@ const initialState = {
   newProject: [],
   creatingNewProject: false,
   creationError: '',
+  success: false,
 };
 
 export const projectReducer = (state = initialState, action) => {
@@ -22,12 +23,14 @@ export const projectReducer = (state = initialState, action) => {
         ...state,
         newProject: action.payload,
         creatingNewProject: false,
+        success: true,
       };
     case projectActions.CREATE_NEW_PROJECT_FAILED:
       return {
         ...state,
         creatingNewProject: false,
         creationError: action.creationError,
+        success: false,
       };
     case projectActions.CREATING_NEW_PROJECT:
       return { ...state, creatingNewProject: true };
