@@ -57,7 +57,8 @@ class ProfileAPIView(APIView):
 
 class LoginView(generics.GenericAPIView):
     permission_classes = (AllowAny,)
-    
+    serializer_class = UserSerializer
+
     def post(self, request, format=None):
         username = request.data.get("username")
         password = request.data.get("password")
