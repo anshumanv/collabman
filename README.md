@@ -47,20 +47,6 @@ Run the devlopment server
 python3 manage.py runserver
 ```
 
-NOTE: If server fails to run due to some SSL errors, go to `collabman/settings.py` and set DATABASES to
-```py
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': config('DB_NAME'),
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
-        'HOST': config('DB_HOST'),
-        'PORT': config('DB_PORT'),
-    }
-}
-```
-
 
 ##### Frontend
 
