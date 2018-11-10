@@ -7,3 +7,5 @@ assets/bundles
 .vscode
 webpack-stats.dev.json
 .env
+migrations
+
