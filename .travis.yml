@@ -15,7 +15,7 @@ env:
   -ALLOWED_HOSTS=*
   -SKEY=collabman
 install:
-  - pipenv install
+  - pip install -r requirements.txt
 before_script:
   - psql -c "CREATE USER test WITH CREATEUSER PASSWORD 'test';" -U postgres
   - psql -c "ALTER USER test CREATEDB;" -U postgres
