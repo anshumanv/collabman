@@ -131,7 +131,7 @@ class MeetingScheduler extends Component {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',
         },
-        attendees: `${this.state.attendeesArray}`,
+        attendees: this.state.attendeesArray,
         end: {
           dateTime: `${this.state.date}T${this.state.time}:00+05:30`,
           timeZone: 'Asia/Kolkata',

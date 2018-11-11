@@ -57,17 +57,16 @@ export default class Redirect extends React.Component {
   }
 
   componentDidMount() {
-    addResponseMessage('Welcome to this awesome chat!');
+    addResponseMessage('Welcome to the chat of your project.');
   }
 
   handleNewUserMessage(newMessage) {
     // console.log(`New message incoming! ${newMessage}`);
+    // gommenasai => change the debug channel later
     axios.post(
       `https://slack.com/api/chat.postMessage?token=${localStorage.getItem(
         'slack_token',
-      )}&channel=${localStorage.getItem(
-        'general_channel_id',
-      )}&text=${newMessage}`,
+      )}&channel=CDL733HC4&text=${newMessage}`,
     );
     // .then(message => console.log(message));
   }
@@ -78,11 +77,12 @@ export default class Redirect extends React.Component {
 
   render() {
     // console.log(this.state.token);
+    // TODO => dynamic channel later;
     axios
       .get(
         `https://slack.com/api/conversations.history?token=${localStorage.getItem(
           'slack_token',
-        )}&channel=${localStorage.getItem('general_channel_id')}`,
+        )}&channel=CDL733HC4`,
       )
       .then(response => {
         // console.log(response, response.data.messages);
