@@ -38,7 +38,7 @@ six==1.11.0
 social-auth-app-django==3.1.0
 social-auth-core==2.0.0
 uritemplate==3.0.0
-urllib3==1.24
+urllib3==1.26.5
 virtualenv==16.1.0
 virtualenv-clone==0.4.0
 wakatime==10.4.2
